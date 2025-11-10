@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtStrategy } from '../../../src/auth/strategies/jwt.strategy';
 import { UsersService } from '../../../src/users/users.service';
-import { mockUser } from '../__mocks__/user.mock';
+import { mockUser } from '../mocks/user.mock';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
