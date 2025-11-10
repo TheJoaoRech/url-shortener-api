@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../../src/users/users.service';
 import { User } from '../../src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -144,6 +144,16 @@ describe('UsersService', () => {
       const result = await service.findOne(userId);
 
       expect(result).toEqual(mockUser);
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+    });
+
+    it('should throw NotFoundException when user not found', async () => {
+      const userId = 'non-existent-id';
+      mockRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findOne(userId)).rejects.toThrow(NotFoundException);
       expect(repository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
       });
