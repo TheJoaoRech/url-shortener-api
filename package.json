@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "build:vercel": "tsc -p tsconfig.vercel.json",
+    "vercel-build": "tsc -p tsconfig.vercel.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

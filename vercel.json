@@ -2,22 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["src/**"],
-        "maxDuration": 10
-      }
+      "src": "package.json",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/index.ts"
+      "dest": "/api/index.js"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "ENABLE_SWAGGER": "false"
-  }
+  ]
 }
