@@ -18,6 +18,33 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - url-shortener-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: url-shortener-app
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/urlshortener
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      JWT_EXPIRATION: 1d
+      PORT: 3000
+      NODE_ENV: production
+      BASE_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - url-shortener-network
 
 volumes:
   postgres_data:
+
+networks:
+  url-shortener-network:
+    driver: bridge
