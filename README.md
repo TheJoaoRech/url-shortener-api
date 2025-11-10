@@ -1,4 +1,4 @@
-# API de Encurtamento de URLs
+# URL Shortener API
 
 ![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
@@ -9,182 +9,182 @@
 
 ---
 
-## 📝 Descrição Geral
+## 📝 Overview
 
-Uma **API RESTful moderna e escalável** feita em **NestJS** para encurtamento de URLs com recursos avançados de gerenciamento e segurança, otimizada para deployment serverless.
+A **modern and scalable RESTful API** built with **NestJS** for URL shortening with advanced management and security features, optimized for serverless deployment.
 
-### ✨ Principais Funcionalidades
+### ✨ Key Features
 
-- 🔗 **Encurtamento de URLs** - Geração automática de códigos curtos com nanoid
-- 🔐 **Autenticação JWT** - Sistema completo de registro e login com tokens stateless
-- 🗄️ **Persistência com TypeORM** - PostgreSQL como banco de dados relacional
-- 📊 **Contagem de Acessos** - Tracking automático de cada redirecionamento
-- 🗑️ **Soft Delete** - Preservação de dados históricos sem remoção física
-- 📚 **Documentação Swagger** - API totalmente documentada e testável via interface web
-- ☁️ **Serverless Ready** - Otimizado para deployment em Vercel
-- 🧪 **Cobertura de Testes** - Testes unitários e E2E com alta cobertura
-- 🛡️ **Segurança** - CORS, validações robustas e proteção de rotas
-
----
-
-## 🚀 Tecnologias Utilizadas
-
-| Tecnologia            | Descrição                                                            | Versão               |
-| --------------------- | -------------------------------------------------------------------- | -------------------- |
-| **Node.js**           | Runtime JavaScript server-side                                       | LTS (v20+)           |
-| **NestJS**            | Framework progressivo Node.js para aplicações server-side escaláveis | ^11.x                |
-| **TypeScript**        | Superset JavaScript com tipagem estática                             | ^5.x                 |
-| **TypeORM**           | ORM para TypeScript e Node.js                                        | ^0.3.x               |
-| **PostgreSQL**        | Banco de dados relacional open-source                                | 15+                  |
-| **JWT**               | JSON Web Tokens para autenticação stateless                          | via @nestjs/jwt      |
-| **Passport**          | Middleware de autenticação para Node.js                              | via @nestjs/passport |
-| **Jest**              | Framework de testes unitários e E2E                                  | ^30.x                |
-| **Swagger / OpenAPI** | Documentação interativa de APIs                                      | via @nestjs/swagger  |
-| **class-validator**   | Validação declarativa baseada em decorators                          | ^0.14.x              |
-| **bcrypt**            | Hash seguro de senhas                                                | ^6.x                 |
-| **nanoid**            | Gerador de IDs curtos únicos                                         | ^3.x                 |
+- 🔗 **URL Shortening** - Automatic generation of short codes with nanoid
+- 🔐 **JWT Authentication** - Complete registration and login system with stateless tokens
+- 🗄️ **TypeORM Persistence** - PostgreSQL as relational database
+- 📊 **Access Tracking** - Automatic tracking of each redirect
+- 🗑️ **Soft Delete** - Preservation of historical data without physical removal
+- 📚 **Swagger Documentation** - Fully documented and testable API via web interface
+- ☁️ **Serverless Ready** - Optimized for Vercel deployment
+- 🧪 **Test Coverage** - Unit and E2E tests with high coverage
+- 🛡️ **Security** - CORS, robust validations, and route protection
 
 ---
 
-## 📦 Requisitos do Sistema e Regras de Negócio
+## 🚀 Technologies Used
 
-### Requisitos Funcionais Principais
+| Technology            | Description                                                 | Version              |
+| --------------------- | ----------------------------------------------------------- | -------------------- |
+| **Node.js**           | JavaScript runtime server-side                              | LTS (v20+)           |
+| **NestJS**            | Progressive Node.js framework for scalable server-side apps | ^11.x                |
+| **TypeScript**        | JavaScript superset with static typing                      | ^5.x                 |
+| **TypeORM**           | ORM for TypeScript and Node.js                              | ^0.3.x               |
+| **PostgreSQL**        | Open-source relational database                             | 15+                  |
+| **JWT**               | JSON Web Tokens for stateless authentication                | via @nestjs/jwt      |
+| **Passport**          | Authentication middleware for Node.js                       | via @nestjs/passport |
+| **Jest**              | Unit and E2E testing framework                              | ^30.x                |
+| **Swagger / OpenAPI** | Interactive API documentation                               | via @nestjs/swagger  |
+| **class-validator**   | Declarative validation based on decorators                  | ^0.14.x              |
+| **bcrypt**            | Secure password hashing                                     | ^6.x                 |
+| **nanoid**            | Unique short ID generator                                   | ^3.x                 |
 
-#### ✅ 1. Cadastro e Autenticação de Usuários
+---
 
-- Registro via e-mail e senha
-- Login retorna token JWT com expiração configurável
-- Senha hasheada com bcrypt (10 salt rounds)
-- Validação de e-mail único no sistema
+## 📦 System Requirements and Business Rules
 
-#### ✅ 2. Encurtamento de URLs
+### Main Functional Requirements
 
-- Funcionalidade disponível **apenas com autenticação**
-- URLs são associadas ao usuário logado (campo `userId`)
-- Geração automática de shortCode com nanoid (6-10 caracteres)
-- Validação de URL original válida
+#### ✅ 1. User Registration and Authentication
 
-#### ✅ 3. Gestão de URLs (usuários autenticados)
+- Registration via email and password
+- Login returns JWT token with configurable expiration
+- Password hashed with bcrypt (10 salt rounds)
+- Unique email validation in the system
 
-- Listar todas as URLs próprias
-- Atualizar URL original
-- Excluir URLs (soft delete mantém histórico)
-- Visualizar estatísticas de acessos
+#### ✅ 2. URL Shortening
 
-#### ✅ 4. Redirecionamento
+- Functionality available **only with authentication**
+- URLs are associated with the logged-in user (`userId` field)
+- Automatic shortCode generation with nanoid (6-10 characters)
+- Valid original URL validation
 
-- Endpoint público `GET /:shortCode` redireciona para URL original
-- Suporte tanto para shortCode quanto customAlias
-- Retorna 404 se URL foi deletada ou não existe
+#### ✅ 3. URL Management (authenticated users)
+
+- List all own URLs
+- Update original URL
+- Delete URLs (soft delete maintains history)
+- View access statistics
+
+#### ✅ 4. Redirection
+
+- Public endpoint `GET /:shortCode` redirects to original URL
+- Support for both shortCode and customAlias
+- Returns 404 if URL was deleted or doesn't exist
 
 #### ✅ 5. Soft Delete
 
-- Registros não são removidos fisicamente do banco
-- Campo `deletedAt` marca exclusão lógica
-- URLs deletadas não são acessíveis via redirecionamento
-- Preserva integridade referencial e histórico
+- Records are not physically removed from database
+- `deletedAt` field marks logical deletion
+- Deleted URLs are not accessible via redirection
+- Preserves referential integrity and history
 
 ---
 
-### Regras de Negócio das URLs
+### URL Business Rules
 
-| Regra                        | Descrição                                                         |
-| ---------------------------- | ----------------------------------------------------------------- |
-| **Validação de URL**         | Deve conter protocolo `http://` ou `https://` válido              |
-| **Código Curto (shortCode)** | Gerado automaticamente com nanoid (6-10 caracteres alfanuméricos) |
-| **Geração de shortCode**     | Algoritmo nanoid garante unicidade estatística                    |
-| **Redirecionamento**         | HTTP Status **301 Moved Permanently** (redirect permanente)       |
-| **URLs Deletadas**           | Retornam **404 Not Found** ao tentar acessar                      |
-| **Timestamps**               | `createdAt`, `updatedAt`, `deletedAt` automáticos via TypeORM     |
-
----
-
-### Endpoints da API
-
-| Método   | Endpoint         | Descrição                         | Auth |
-| -------- | ---------------- | --------------------------------- | ---- |
-| `POST`   | `/auth/register` | Registra novo usuário             | ❌   |
-| `POST`   | `/auth/login`    | Autentica e retorna JWT           | ❌   |
-| `POST`   | `/urls`          | Encurta uma URL                   | ✅   |
-| `GET`    | `/urls`          | Lista URLs do usuário autenticado | ✅   |
-| `GET`    | `/urls/:id`      | Busca uma URL específica por ID   | ✅   |
-| `PATCH`  | `/urls/:id`      | Atualiza URL original             | ✅   |
-| `DELETE` | `/urls/:id`      | Soft delete de URL                | ✅   |
-| `GET`    | `/:shortCode`    | Redireciona para URL original     | ❌   |
-
-**Legenda:**
-
-- ✅ = Requer token JWT no header `Authorization: Bearer <token>`
-- ❌ = Público (sem autenticação)
+| Rule                     | Description                                                        |
+| ------------------------ | ------------------------------------------------------------------ |
+| **URL Validation**       | Must contain valid `http://` or `https://` protocol                |
+| **Short Code**           | Automatically generated with nanoid (6-10 alphanumeric characters) |
+| **shortCode Generation** | nanoid algorithm guarantees statistical uniqueness                 |
+| **Redirection**          | HTTP Status **301 Moved Permanently** (permanent redirect)         |
+| **Deleted URLs**         | Return **404 Not Found** when attempting to access                 |
+| **Timestamps**           | `createdAt`, `updatedAt`, `deletedAt` automatic via TypeORM        |
 
 ---
 
-## ⚙️ Arquitetura da Aplicação
+### API Endpoints
 
-A aplicação segue os princípios de **Clean Architecture** e **SOLID**, garantindo:
+| Method   | Endpoint         | Description                    | Auth |
+| -------- | ---------------- | ------------------------------ | ---- |
+| `POST`   | `/auth/register` | Register new user              | ❌   |
+| `POST`   | `/auth/login`    | Authenticate and return JWT    | ❌   |
+| `POST`   | `/urls`          | Shorten a URL                  | ✅   |
+| `GET`    | `/urls`          | List authenticated user's URLs | ✅   |
+| `GET`    | `/urls/:id`      | Get specific URL by ID         | ✅   |
+| `PATCH`  | `/urls/:id`      | Update original URL            | ✅   |
+| `DELETE` | `/urls/:id`      | Soft delete URL                | ✅   |
+| `GET`    | `/:shortCode`    | Redirect to original URL       | ❌   |
 
-- 🎯 Separação clara de responsabilidades
-- 🔄 Facilidade de manutenção e testes
-- 📈 Escalabilidade horizontal e vertical
-- 🧩 Baixo acoplamento entre módulos
+**Legend:**
 
-### Organização de Camadas
+- ✅ = Requires JWT token in header `Authorization: Bearer <token>`
+- ❌ = Public (no authentication)
+
+---
+
+## ⚙️ Application Architecture
+
+The application follows **Clean Architecture** and **SOLID** principles, ensuring:
+
+- 🎯 Clear separation of responsibilities
+- 🔄 Easy maintenance and testing
+- 📈 Horizontal and vertical scalability
+- 🧩 Low coupling between modules
+
+### Layer Organization
 
 ```
 src/
-├── main.ts                    # Entry point da aplicação
-├── app.module.ts              # Módulo raiz
-├── app.controller.ts          # Controller raiz
-├── app.service.ts             # Service raiz
+├── main.ts                    # Application entry point
+├── app.module.ts              # Root module
+├── app.controller.ts          # Root controller
+├── app.service.ts             # Root service
 │
-├── auth/                      # 🔐 Módulo de Autenticação
+├── auth/                      # 🔐 Authentication Module
 │   ├── auth.controller.ts
 │   ├── auth.service.ts
 │   ├── strategies/            # JWT Strategy
-│   ├── guards/                # Guards de autenticação
-│   ├── decorators/            # Decorators customizados
-│   └── dto/                   # DTOs de autenticação
+│   ├── guards/                # Authentication Guards
+│   ├── decorators/            # Custom Decorators
+│   └── dto/                   # Authentication DTOs
 │
-├── users/                     # 👤 Módulo de Usuários
+├── users/                     # 👤 Users Module
 │   ├── users.service.ts
 │   ├── entities/              # User Entity (TypeORM)
-│   └── dto/                   # DTOs de usuário
+│   └── dto/                   # User DTOs
 │
-├── urls/                      # 🔗 Módulo de URLs
+├── urls/                      # 🔗 URLs Module
 │   ├── urls.controller.ts
 │   ├── urls.service.ts
 │   ├── entities/              # URL Entity (TypeORM)
-│   └── dto/                   # DTOs de URL
+│   └── dto/                   # URL DTOs
 │
-├── common/                    # 🛠️ Recursos Compartilhados
+├── common/                    # 🛠️ Shared Resources
 │   ├── interceptors/          # Logging Interceptor
 │   ├── filters/               # Exception Filters
-│   └── middlewares/           # Middlewares globais
+│   └── middlewares/           # Global Middlewares
 │
-└── config/                    # ⚙️ Configurações
-    └── logger.config.ts       # Configuração Winston
+└── config/                    # ⚙️ Configuration
+    └── logger.config.ts       # Winston Configuration
 
 api/
-└── index.ts                   # ☁️ Entry point Serverless (Vercel)
+└── index.ts                   # ☁️ Serverless Entry Point (Vercel)
 ```
 
-### Princípios Aplicados
+### Applied Principles
 
-- ✅ **Separation of Concerns** - Cada módulo tem responsabilidade única bem definida
-- ✅ **Dependency Injection** - NestJS IoC Container gerencia todas as dependências
-- ✅ **Repository Pattern** - Abstração completa do acesso a dados via TypeORM
-- ✅ **DTO Pattern** - Validação e transformação de dados de entrada/saída
-- ✅ **Strategy Pattern** - Passport JWT Strategy para autenticação extensível
-- ✅ **Guard Pattern** - Proteção declarativa de rotas autenticadas
-- ✅ **SOLID Principles** - Código limpo, testável e manutenível
+- ✅ **Separation of Concerns** - Each module has a well-defined single responsibility
+- ✅ **Dependency Injection** - NestJS IoC Container manages all dependencies
+- ✅ **Repository Pattern** - Complete abstraction of data access via TypeORM
+- ✅ **DTO Pattern** - Input/output data validation and transformation
+- ✅ **Strategy Pattern** - Passport JWT Strategy for extensible authentication
+- ✅ **Guard Pattern** - Declarative protection of authenticated routes
+- ✅ **SOLID Principles** - Clean, testable, and maintainable code
 
 ---
 
-## 🧱 Diagrama de Arquitetura
+## 🧱 Architecture Diagram
 
-> 📊 **Diagrama visual completo disponível em:** [Link do Miro] (em construção)
+> 📊 **Complete visual diagram available at:** [Miro Link] (under construction)
 
-### Arquitetura Simplificada
+### Simplified Architecture
 
 ```mermaid
 flowchart TD
@@ -203,11 +203,11 @@ flowchart TD
         C4["Common Module<br/>(Interceptors, Logging)"]
     end
 
-    subgraph DB["Banco de Dados"]
+    subgraph DB["Database"]
         D[(PostgreSQL<br/>Neon/Supabase)]
     end
 
-    subgraph Monitor["Observabilidade"]
+    subgraph Monitor["Observability"]
         E1["Vercel Analytics"]
         E2["Application Logs"]
     end
@@ -231,48 +231,48 @@ flowchart TD
 
 ---
 
-## 🔗 Diagrama de Fluxo - Encurtamento de URL
+## 🔗 Flow Diagram - URL Shortening
 
 ```mermaid
 flowchart TD
-    Start([Cliente faz POST /urls + JWT])
-    A[Valida JWT Token]
-    B{Token válido?}
-    C[Retorna 401 Unauthorized]
-    D[Extrai userId do token]
-    E[Valida URL original]
-    F{URL válida?}
-    G[Retorna 400 Bad Request]
-    H[Gera shortCode com nanoid<br/>6-10 caracteres]
-    I{shortCode único?}
-    J[Salva URL no banco<br/>com userId associado]
-    K[Retorna 201 Created<br/>com shortUrl]
-    End([Fim])
+    Start([Client makes POST /urls + JWT])
+    A[Validate JWT Token]
+    B{Valid token?}
+    C[Return 401 Unauthorized]
+    D[Extract userId from token]
+    E[Validate original URL]
+    F{Valid URL?}
+    G[Return 400 Bad Request]
+    H[Generate shortCode with nanoid<br/>6-10 characters]
+    I{Unique shortCode?}
+    J[Save URL in database<br/>with associated userId]
+    K[Return 201 Created<br/>with shortUrl]
+    End([End])
 
     Start --> A
     A --> B
-    B -->|Não| C --> End
-    B -->|Sim| D
+    B -->|No| C --> End
+    B -->|Yes| D
     D --> E
     E --> F
-    F -->|Não| G --> End
-    F -->|Sim| H
+    F -->|No| G --> End
+    F -->|Yes| H
     H --> I
-    I -->|Não| H
-    I -->|Sim| J
+    I -->|No| H
+    I -->|Yes| J
     J --> K
     K --> End
 ```
 
 ---
 
-## �🧮 Modelo Entidade-Relacionamento
+## Entity-Relationship Model
 
 ```mermaid
 erDiagram
     USER {
         UUID id PK
-        STRING email UK "Único, not null"
+        STRING email UK "Unique, not null"
         STRING password "Hash bcrypt"
         TIMESTAMP createdAt "default: now()"
         TIMESTAMP updatedAt "auto-update"
@@ -281,7 +281,7 @@ erDiagram
 
     URL {
         UUID id PK
-        TEXT originalUrl "URL completa"
+        TEXT originalUrl "Complete URL"
         STRING shortCode UK "6-10 chars nanoid, unique"
         TIMESTAMP createdAt "default: now()"
         TIMESTAMP updatedAt "auto-update"
@@ -289,22 +289,22 @@ erDiagram
         UUID userId FK "not null"
     }
 
-    USER ||--o{ URL : "possui"
+    USER ||--o{ URL : "owns"
 ```
 
-**Constraints e Índices:**
+**Constraints and Indexes:**
 
 - `email` → UNIQUE, NOT NULL, VARCHAR(255)
 - `shortCode` → UNIQUE, NOT NULL, INDEX
-- `userId` → FK para `users.id`, ON DELETE CASCADE, INDEX
+- `userId` → FK to `users.id`, ON DELETE CASCADE, INDEX
 
 ---
 
-## 🧰 Instalação e Execução
+## 🧰 Installation and Execution
 
-### Pré-requisitos
+### Prerequisites
 
-Certifique-se de ter instalado:
+Make sure you have installed:
 
 - **Node.js** v20+ LTS ([Download](https://nodejs.org/))
 - **PostgreSQL** 15+ ([Download](https://www.postgresql.org/download/))
@@ -313,101 +313,101 @@ Certifique-se de ter instalado:
 
 ---
 
-### Passo a Passo
+### Step by Step
 
-#### **1️⃣ Clone o repositório**
+#### **1️⃣ Clone the repository**
 
 ```bash
 git clone https://github.com/TheJoaoRech/url-shortener-api.git
 cd url-shortener-api
 ```
 
-#### **2️⃣ Instale as dependências**
+#### **2️⃣ Install dependencies**
 
 ```bash
 npm install
 ```
 
-#### **3️⃣ Configure as variáveis de ambiente**
+#### **3️⃣ Configure environment variables**
 
 ```bash
 cp .env.example .env
 ```
 
-Edite o arquivo `.env` conforme necessário:
+Edit the `.env` file as needed:
 
 ```env
 # Database
 DATABASE_URL="postgresql://user:password@localhost:5432/url_shortener"
 
 # JWT
-JWT_SECRET=sua-chave-secreta-super-segura-aqui
+JWT_SECRET=your-super-secure-secret-key-here
 
 # Application
 PORT=3000
 NODE_ENV=development
 ```
 
-⚠️ **IMPORTANTE:** Altere `JWT_SECRET` para produção com uma chave forte!
+⚠️ **IMPORTANT:** Change `JWT_SECRET` for production with a strong key!
 
-#### **4️⃣ Configure o banco de dados**
+#### **4️⃣ Configure the database**
 
 ```bash
-# Criar banco de dados PostgreSQL
+# Create PostgreSQL database
 createdb url_shortener
 
-# Executar migrations
+# Run migrations
 npm run typeorm migration:run
 
-# Ou se preferir sincronização automática (apenas desenvolvimento)
-# Configure synchronize: true no app.module.ts
+# Or if you prefer automatic synchronization (development only)
+# Set synchronize: true in app.module.ts
 ```
 
-#### **5️⃣ Inicie a aplicação**
+#### **5️⃣ Start the application**
 
 ```bash
-# Desenvolvimento com hot-reload
+# Development with hot-reload
 npm run start:dev
 
-# Ou em modo produção
+# Or in production mode
 npm run build
 npm run start:prod
 ```
 
-#### **6️⃣ Acesse a aplicação**
+#### **6️⃣ Access the application**
 
 - 🌐 **API:** [http://localhost:3000](http://localhost:3000)
 - 📚 **Swagger Docs:** [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
 
 ---
 
-## 🚦 Testes
+## 🚦 Tests
 
-### Testes Unitários
+### Unit Tests
 
 ```bash
-# Rodar todos os testes unitários
+# Run all unit tests
 npm run test
 
-# Modo watch (desenvolvimento)
+# Watch mode (development)
 npm run test:watch
 
-# Com cobertura de código
+# With code coverage
 npm run test:cov
 ```
 
-### Testes E2E (End-to-End)
+### E2E Tests (End-to-End)
 
 ```bash
-# Rodar testes E2E
+# Run E2E tests
 npm run test:e2e
 ```
 
-### Estrutura de Testes
+### Test Structure
 
 ```
 test/
-├── unit/                           # Testes unitários isolados
+├── unit/                           # Isolated unit tests
 │   ├── auth/
 │   │   ├── auth.controller.spec.ts
 │   │   ├── auth.service.spec.ts
@@ -420,93 +420,93 @@ test/
 │   └── common/
 │       └── logging.interceptor.spec.ts
 │
-├── e2e/                            # Testes end-to-end
+├── e2e/                            # End-to-end tests
 │   ├── app.e2e-spec.ts
 │   ├── auth.e2e-spec.ts
 │   └── urls.e2e-spec.ts
 │
-└── jest-e2e.json                   # Configuração E2E
+└── jest-e2e.json                   # E2E Configuration
 ```
 
-### Cobertura de Testes
+### Test Coverage
 
-**Cobertura mínima exigida:** 80% (branches, functions, lines, statements)
+**Minimum required coverage:** 80% (branches, functions, lines, statements)
 
-Os testes cobrem:
+Tests cover:
 
-- ✅ Autenticação (registro, login, validação JWT)
-- ✅ Encurtamento de URLs (com validações)
-- ✅ Redirecionamento e códigos HTTP corretos
-- ✅ CRUD completo de URLs autenticadas
-- ✅ Soft delete e queries com `deletedAt`
-- ✅ Guards e decorators de autenticação
-- ✅ Interceptors de logging
-- ✅ Tratamento de erros e edge cases
+- ✅ Authentication (registration, login, JWT validation)
+- ✅ URL shortening (with validations)
+- ✅ Redirection and correct HTTP codes
+- ✅ Complete CRUD of authenticated URLs
+- ✅ Soft delete and queries with `deletedAt`
+- ✅ Authentication guards and decorators
+- ✅ Logging interceptors
+- ✅ Error handling and edge cases
 
 ---
 
-## 📘 Documentação da API (Swagger)
+## 📘 API Documentation (Swagger)
 
-Após iniciar a aplicação, acesse a documentação interativa:
+After starting the application, access the interactive documentation:
 
 🔗 **[http://localhost:3000/api/docs](http://localhost:3000/api/docs)**
 
-### Recursos da Documentação:
+### Documentation Features:
 
-- ✅ **Todos os endpoints** com descrições detalhadas
-- ✅ **Schemas de request/response** com validações
-- ✅ **Exemplos de payloads** prontos para usar
-- ✅ **Autenticação JWT** via botão "Authorize"
-- ✅ **Testagem interativa** direto pelo navegador
-- ✅ **Códigos de status HTTP** documentados
-- ✅ **Modelos de dados** com tipos TypeScript
+- ✅ **All endpoints** with detailed descriptions
+- ✅ **Request/response schemas** with validations
+- ✅ **Payload examples** ready to use
+- ✅ **JWT Authentication** via "Authorize" button
+- ✅ **Interactive testing** directly from browser
+- ✅ **HTTP status codes** documented
+- ✅ **Data models** with TypeScript types
 
-### Como testar via Swagger:
+### How to test via Swagger:
 
-1. Acesse http://localhost:3000/api/docs
-2. Registre um usuário em `POST /auth/register`
-3. Faça login em `POST /auth/login` e copie o token
-4. Clique em "Authorize" e cole o token no formato: `Bearer <seu-token>`
-5. Teste os endpoints protegidos!
+1. Access http://localhost:3000/api/docs
+2. Register a user at `POST /auth/register`
+3. Login at `POST /auth/login` and copy the token
+4. Click "Authorize" and paste the token in format: `Bearer <your-token>`
+5. Test the protected endpoints!
 
 ---
 
-## 🌐 Variáveis de Ambiente
+## 🌐 Environment Variables
 
-| Variável       | Descrição                             | Valor Padrão  |
+| Variable       | Description                           | Default Value |
 | -------------- | ------------------------------------- | ------------- |
-| `NODE_ENV`     | Ambiente de execução                  | `development` |
-| `PORT`         | Porta da aplicação                    | `3000`        |
-| `DATABASE_URL` | String de conexão PostgreSQL completa | -             |
-| `JWT_SECRET`   | Chave secreta para tokens JWT         | -             |
+| `NODE_ENV`     | Execution environment                 | `development` |
+| `PORT`         | Application port                      | `3000`        |
+| `DATABASE_URL` | Complete PostgreSQL connection string | -             |
+| `JWT_SECRET`   | Secret key for JWT tokens             | -             |
 
-### Exemplo completo de `.env`:
+### Complete `.env` example:
 
 ```env
 NODE_ENV=development
 PORT=3000
 DATABASE_URL="postgresql://user:password@localhost:5432/url_shortener"
-JWT_SECRET=sua-chave-super-segura-mude-em-producao
+JWT_SECRET=your-super-secure-key-change-in-production
 ```
 
 ---
 
-## ☁️ Deploy no Vercel
+## ☁️ Vercel Deployment
 
-Este projeto está otimizado para deployment serverless no Vercel.
+This project is optimized for serverless deployment on Vercel.
 
-### **1️⃣ Instale o Vercel CLI**
+### **1️⃣ Install Vercel CLI**
 
 ```bash
 npm i -g vercel
 ```
 
-### **2️⃣ Configure as variáveis de ambiente**
+### **2️⃣ Configure environment variables**
 
-No painel do Vercel, adicione:
+In the Vercel dashboard, add:
 
-- `DATABASE_URL` - String de conexão PostgreSQL (recomendado: Neon, Supabase, Railway)
-- `JWT_SECRET` - Sua chave secreta JWT
+- `DATABASE_URL` - PostgreSQL connection string (recommended: Neon, Supabase, Railway)
+- `JWT_SECRET` - Your JWT secret key
 - `NODE_ENV` - `production`
 
 ### **3️⃣ Deploy**
@@ -515,100 +515,100 @@ No painel do Vercel, adicione:
 vercel --prod
 ```
 
-### Otimizações para Serverless:
+### Serverless Optimizations:
 
-- ✅ Logger otimizado (sem escrita em disco)
-- ✅ Connection pooling configurado para serverless
-- ✅ Timeouts ajustados (5s)
-- ✅ Swagger desabilitado em produção
-- ✅ Build otimizado com TypeScript
+- ✅ Optimized logger (no disk writes)
+- ✅ Connection pooling configured for serverless
+- ✅ Adjusted timeouts (5s)
+- ✅ Swagger disabled in production
+- ✅ Optimized TypeScript build
 
 ---
 
-## 🧪 Critérios de Qualidade do Projeto
+## 🧪 Project Quality Criteria
 
-### Qualidade de Código
+### Code Quality
 
-- ✅ **TypeScript Strict Mode** ativo para máxima segurança de tipos
-- ✅ **ESLint** configurado com regras recomendadas NestJS
-- ✅ **Prettier** para formatação consistente do código
-- ✅ **Zero warnings** no build de produção
+- ✅ **TypeScript Strict Mode** active for maximum type safety
+- ✅ **ESLint** configured with NestJS recommended rules
+- ✅ **Prettier** for consistent code formatting
+- ✅ **Zero warnings** in production build
 
-### Testes
+### Tests
 
-- ✅ **Cobertura ≥ 80%** em testes unitários
-- ✅ **Testes E2E** cobrindo todos os fluxos principais
-- ✅ **Testes de integração** com banco de dados real
+- ✅ **Coverage ≥ 80%** in unit tests
+- ✅ **E2E tests** covering all main flows
+- ✅ **Integration tests** with real database
 
-### Documentação
+### Documentation
 
-- ✅ **Swagger/OpenAPI** completo e atualizado automaticamente
-- ✅ **README.md** detalhado com diagramas e exemplos
-- ✅ **Diagramas Mermaid** para arquitetura e fluxos
-- ✅ **Comentários JSDoc** em funções complexas
-- ✅ **Documentação inline** no código quando necessário
+- ✅ **Swagger/OpenAPI** complete and automatically updated
+- ✅ **README.md** detailed with diagrams and examples
+- ✅ **Mermaid diagrams** for architecture and flows
+- ✅ **JSDoc comments** in complex functions
+- ✅ **Inline documentation** in code when necessary
 
 ### DevOps
 
-- ✅ **Vercel Deployment** configurado e otimizado
-- ✅ **TypeORM Migrations** (quando necessário)
-- ✅ **Variáveis de ambiente** documentadas
-- ✅ **Logs estruturados** com Winston
+- ✅ **Vercel Deployment** configured and optimized
+- ✅ **TypeORM Migrations** (when necessary)
+- ✅ **Environment variables** documented
+- ✅ **Structured logs** with Winston
 
-### Segurança
+### Security
 
-- ✅ **Senhas hasheadas** com bcrypt (10 salt rounds)
-- ✅ **JWT stateless** com expiração configurável
-- ✅ **Validação de entrada** rigorosa com class-validator
-- ✅ **CORS** configurado adequadamente
-- ✅ **SQL Injection** prevenido via TypeORM
-- ✅ **XSS Protection** via validação de entrada
+- ✅ **Hashed passwords** with bcrypt (10 salt rounds)
+- ✅ **Stateless JWT** with configurable expiration
+- ✅ **Strict input validation** with class-validator
+- ✅ **CORS** properly configured
+- ✅ **SQL Injection** prevented via TypeORM
+- ✅ **XSS Protection** via input validation
 
 ### Performance
 
-- ✅ **Connection Pooling** otimizado para serverless
-- ✅ **Índices de banco** em campos frequentemente consultados
-- ✅ **Queries otimizadas** com TypeORM
-- ✅ **Lazy Loading** de módulos quando aplicável
+- ✅ **Connection Pooling** optimized for serverless
+- ✅ **Database indexes** on frequently queried fields
+- ✅ **Optimized queries** with TypeORM
+- ✅ **Lazy Loading** of modules when applicable
 
 ---
 
-## ☁️ Escalabilidade da Solução
+## ☁️ Scalability Solution
 
-> 📊 **Diagrama de arquitetura completo disponível em:** [Link do Miro] (em construção)
+> 📊 **Complete architecture diagram available at:** [Miro Link] (under construction)
 
-A aplicação foi projetada para garantir alta disponibilidade, desempenho otimizado e capacidade de expansão conforme o crescimento da base de usuários.
+The application was designed to ensure high availability, optimized performance, and expansion capacity as the user base grows.
 
-### 🔄 Estratégias de Escalabilidade
+### 🔄 Scalability Strategies
 
-#### **Escalabilidade Horizontal**
+#### **Horizontal Scalability**
 
-A aplicação segue o princípio de **arquitetura stateless**, permitindo adicionar múltiplas instâncias sem compartilhamento de estado.
+The application follows the **stateless architecture** principle, allowing multiple instances to be added without state sharing.
 
-**Stateless API com JWT:**
+**Stateless API with JWT:**
 
-- Tokens autocontidos eliminam necessidade de sessões no servidor
-- Qualquer instância pode validar qualquer requisição
-- Sem necessidade de sticky sessions
+- Self-contained tokens eliminate need for server sessions
+- Any instance can validate any request
+- No need for sticky sessions
 
-**Deployment Serverless no Vercel:**
+**Serverless Deployment on Vercel:**
 
-- Auto-scaling automático baseado em demanda
-- Cold start otimizado (< 500ms)
-- Edge network global com baixa latência
-- Zero configuração de infraestrutura
+- Automatic auto-scaling based on demand
+- Optimized cold start (< 500ms)
+- Global edge network with low latency
+- Zero infrastructure configuration
 
-**Connection Pooling Otimizado:**
+**Optimized Connection Pooling:**
 
-- Pool limitado para serverless (max: 1 conexão por função)
-- Timeouts agressivos (5s) para evitar conexões penduradas
-- Suporte a databases serverless (Neon, Supabase)
+- Limited pool for serverless (max: 1 connection per function)
+- Aggressive timeouts (5s) to avoid hanging connections
+- Support for serverless databases (Neon, Supabase)
 
 ```mermaid
 flowchart LR
-    A[Vercel Edge Network] --> B[Função 1]
-    A --> C[Função 2]
-    A --> D[Função N]
+    A[Vercel Edge Network] --> B[Function 1]
+    A --> C[Function 2]
+    A --> D[Function N]
     B --> E[(PostgreSQL)]
     C --> E
     D --> E
@@ -617,24 +617,24 @@ flowchart LR
     style E fill:#336791
 ```
 
-#### **Escalabilidade Vertical**
+#### **Vertical Scalability**
 
-Otimizações para extrair máximo desempenho:
+Optimizations to extract maximum performance:
 
-**1. Otimizações de Banco de Dados**
+**1. Database Optimizations**
 
 ```typescript
-// Connection pooling otimizado
+// Optimized connection pooling
 extra: {
-  max: 1,                        // 1 conexão por função serverless
-  min: 0,                        // Não manter conexões idle
+  max: 1,                        // 1 connection per serverless function
+  min: 0,                        // Don't keep idle connections
   idleTimeoutMillis: 5000,
   connectionTimeoutMillis: 5000,
   statement_timeout: 5000,
 }
 ```
 
-**2. Índices Estratégicos**
+**2. Strategic Indexes**
 
 ```sql
 CREATE INDEX idx_urls_shortcode ON urls(short_code) WHERE deleted_at IS NULL;
@@ -642,94 +642,94 @@ CREATE INDEX idx_urls_userid ON urls(user_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_users_email ON users(email);
 ```
 
-**3. Logging Otimizado**
+**3. Optimized Logging**
 
-- Sem escrita em disco (filesystem read-only no Vercel)
-- Apenas console.log em produção
-- Logs estruturados para observabilidade
-
----
-
-### 🚧 Principais Desafios e Soluções
-
-#### **Desafio 1: Cold Start em Serverless**
-
-**Problema:** Primeira requisição após idle pode demorar
-
-**Soluções:**
-
-- ✅ Cache de instância NestJS (`cachedApp`)
-- ✅ Build otimizado sem source maps
-- ✅ Swagger desabilitado em produção
-- ✅ Lazy loading de módulos
-
-#### **Desafio 2: Conexões de Banco em Serverless**
-
-**Problema:** Cada função cria nova conexão, podendo esgotar pool
-
-**Soluções:**
-
-- ✅ Connection pooling limitado (max: 1)
-- ✅ Databases serverless (Neon com auto-scaling)
-- ✅ Timeouts agressivos para liberar conexões
-
-#### **Desafio 3: Consistência em Múltiplas Instâncias**
-
-**Problema:** Operações concorrentes podem causar colisões
-
-**Soluções:**
-
-- ✅ Constraints UNIQUE no banco (shortCode, email)
-- ✅ Geração de IDs com nanoid (colisão estatisticamente impossível)
-- ✅ Transações atômicas via TypeORM
+- No disk writes (read-only filesystem on Vercel)
+- Only console.log in production
+- Structured logs for observability
 
 ---
 
-### 📊 Capacidade Estimada
+### 🚧 Main Challenges and Solutions
 
-| Métrica                  | Capacidade Estimada | Observação                          |
-| ------------------------ | ------------------- | ----------------------------------- |
-| **Requisições/seg**      | 10,000+             | Com auto-scaling Vercel             |
-| **Usuários Simultâneos** | 50,000+             | Stateless permite alta concorrência |
-| **URLs Armazenadas**     | Milhões             | Limitado pelo storage do banco      |
-| **Latência Média**       | < 200ms             | Com edge network                    |
-| **Cold Start**           | < 500ms             | Com otimizações aplicadas           |
-| **Disponibilidade**      | 99.9%+              | SLA do Vercel + database            |
+#### **Challenge 1: Cold Start in Serverless**
+
+**Problem:** First request after idle may take time
+
+**Solutions:**
+
+- ✅ NestJS instance cache (`cachedApp`)
+- ✅ Optimized build without source maps
+- ✅ Swagger disabled in production
+- ✅ Lazy loading of modules
+
+#### **Challenge 2: Database Connections in Serverless**
+
+**Problem:** Each function creates new connection, potentially exhausting pool
+
+**Solutions:**
+
+- ✅ Limited connection pooling (max: 1)
+- ✅ Serverless databases (Neon with auto-scaling)
+- ✅ Aggressive timeouts to release connections
+
+#### **Challenge 3: Consistency in Multiple Instances**
+
+**Problem:** Concurrent operations may cause collisions
+
+**Solutions:**
+
+- ✅ UNIQUE constraints in database (shortCode, email)
+- ✅ ID generation with nanoid (collision statistically impossible)
+- ✅ Atomic transactions via TypeORM
 
 ---
 
-## 📋 Padrão de Commits
+### 📊 Estimated Capacity
 
-Este projeto segue **[Conventional Commits](https://www.conventionalcommits.org/)**:
+| Metric                 | Estimated Capacity | Observation                       |
+| ---------------------- | ------------------ | --------------------------------- |
+| **Requests/sec**       | 10,000+            | With Vercel auto-scaling          |
+| **Simultaneous Users** | 50,000+            | Stateless allows high concurrency |
+| **Stored URLs**        | Millions           | Limited by database storage       |
+| **Average Latency**    | < 200ms            | With edge network                 |
+| **Cold Start**         | < 500ms            | With applied optimizations        |
+| **Availability**       | 99.9%+             | Vercel + database SLA             |
+
+---
+
+## 📋 Commit Pattern
+
+This project follows **[Conventional Commits](https://www.conventionalcommits.org/)**:
 
 ```
-feat: adiciona nova funcionalidade
-fix: corrige bug específico
-docs: atualiza documentação
-test: adiciona ou corrige testes
-refactor: refatora código sem mudar comportamento
-perf: melhora performance
-style: formatação, ponto e vírgula, etc
-chore: atualiza dependências ou configurações
-ci: mudanças em CI/CD
+feat: adds new feature
+fix: fixes specific bug
+docs: updates documentation
+test: adds or fixes tests
+refactor: refactors code without changing behavior
+perf: improves performance
+style: formatting, semicolons, etc
+chore: updates dependencies or configurations
+ci: changes in CI/CD
 ```
 
-### Checklist antes do Commit:
+### Checklist before Commit:
 
-- [ ] Código segue o style guide (ESLint + Prettier)
-- [ ] Testes unitários passando (`npm test`)
-- [ ] Testes E2E passando (`npm run test:e2e`)
-- [ ] Cobertura de testes ≥ 80%
-- [ ] Documentação atualizada (se aplicável)
-- [ ] Commit message segue Conventional Commits
+- [ ] Code follows style guide (ESLint + Prettier)
+- [ ] Unit tests passing (`npm test`)
+- [ ] E2E tests passing (`npm run test:e2e`)
+- [ ] Test coverage ≥ 80%
+- [ ] Documentation updated (if applicable)
+- [ ] Commit message follows Conventional Commits
 
 ---
 
 ## 📝 License
 
-Este projeto está sob a licença MIT.
+This project is under the MIT license.
 
-## 👨‍💻 Autor
+## 👨‍💻 Author
 
 **João Rech**
 
