@@ -5,10 +5,17 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from '../src/app.module';
 import { loggerConfig } from '../src/config/logger.config';
 import { LoggingInterceptor } from '../src/common/interceptors/logging.interceptor';
-import express from 'express';
+import express, { Request, Response } from 'express';
+import { INestApplication } from '@nestjs/common';
 
 const expressApp = express();
+let cachedApp: INestApplication | null = null;
+
 const createNestServer = async (expressInstance: express.Express) => {
+  if (cachedApp) {
+    return cachedApp;
+  }
+
   const app = await NestFactory.create(
     AppModule,
     new ExpressAdapter(expressInstance),
@@ -41,11 +48,17 @@ const createNestServer = async (expressInstance: express.Express) => {
 
   await app.init();
 
+  cachedApp = app;
   return app;
 };
 
+// Initialize the app
 createNestServer(expressApp)
   .then(() => console.log('Nest Ready'))
   .catch((err) => console.error('Nest broken', err));
 
-export default expressApp;
+// Export for Vercel
+export default async (req: Request, res: Response) => {
+  await createNestServer(expressApp);
+  expressApp(req, res);
+};
