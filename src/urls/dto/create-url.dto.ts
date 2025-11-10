@@ -35,10 +35,10 @@ export class CreateUrlDto {
   })
   @IsOptional()
   @IsString()
-  @Length(3, 30)
-  @Matches(/^[a-z0-9_-]+$/, {
+  @Transform(({ value }) => value?.trim().toLowerCase())
+  @Matches(/^[a-z0-9_-]{3,30}$/i, {
     message:
-      'Custom alias must contain only lowercase letters, numbers, dash and underscore',
+      'Custom alias must be 3-30 characters long and contain only letters, numbers, dash and underscore',
   })
   customAlias?: string;
 }
