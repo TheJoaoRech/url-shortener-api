@@ -6,6 +6,7 @@ import {
   ConflictException,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UrlsService } from '../../src/urls/urls.service';
 import { Url } from '../../src/urls/entities/url.entity';
@@ -267,6 +268,227 @@ describe('UrlsService', () => {
       await expect(service.remove(urlId, userId)).rejects.toThrow(
         NotFoundException,
       );
+    });
+
+    it('should throw ForbiddenException if user tries to delete URL owned by another user', async () => {
+      const urlId = 'url-123';
+      const userId = 'user-123';
+      const differentUserId = 'different-user';
+      const mockUrl = {
+        id: urlId,
+        originalUrl: 'https://github.com',
+        shortCode: 'aB3Xy9',
+        userId: differentUserId,
+        clickCount: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockRepository.findOne.mockResolvedValue(mockUrl);
+
+      await expect(service.remove(urlId, userId)).rejects.toThrow(
+        ForbiddenException,
+      );
+      expect(repository.softDelete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('update', () => {
+    it('should update URL original URL', async () => {
+      const urlId = '123';
+      const userId = 'user-123';
+      const updateUrlDto = {
+        originalUrl: 'https://new-url.com',
+      };
+      const mockUrl = {
+        id: urlId,
+        originalUrl: 'https://old-url.com',
+        shortCode: 'aB3Xy9',
+        userId,
+        clickCount: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockRepository.findOne.mockResolvedValue(mockUrl);
+      mockRepository.save.mockResolvedValue({
+        ...mockUrl,
+        originalUrl: updateUrlDto.originalUrl,
+      });
+
+      const result = await service.update(urlId, updateUrlDto, userId);
+
+      expect(result.originalUrl).toBe('https://new-url.com');
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: urlId } });
+    });
+
+    it('should throw NotFoundException if URL not found for update', async () => {
+      const urlId = 'notfound';
+      const userId = 'user-123';
+      const updateUrlDto = { originalUrl: 'https://new-url.com' };
+
+      mockRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.update(urlId, updateUrlDto, userId)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw ForbiddenException if user does not own URL for update', async () => {
+      const urlId = 'url-123';
+      const userId = 'user-123';
+      const differentUserId = 'different-user';
+      const updateUrlDto = { originalUrl: 'https://new-url.com' };
+      const mockUrl = {
+        id: urlId,
+        originalUrl: 'https://github.com',
+        shortCode: 'aB3Xy9',
+        userId: differentUserId,
+        clickCount: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockRepository.findOne.mockResolvedValue(mockUrl);
+
+      await expect(service.update(urlId, updateUrlDto, userId)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+  });
+
+  describe('generateUniqueSlug - collision handling', () => {
+    it('should generate unique slug after collision', async () => {
+      const firstSlug = 'ABC123';
+      const secondSlug = 'XYZ789';
+      const existingUrl = {
+        id: 'existing-id',
+        originalUrl: 'https://example.com',
+        shortCode: firstSlug,
+        userId: 'user-123',
+        clickCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      let callCount = 0;
+      mockRepository.findOne.mockImplementation(() => {
+        callCount++;
+        return callCount === 1
+          ? Promise.resolve(existingUrl)
+          : Promise.resolve(null);
+      });
+
+      const createUrlDto = {
+        originalUrl: 'https://newurl.com',
+      };
+
+      const savedUrl = {
+        id: 'new-id',
+        originalUrl: createUrlDto.originalUrl,
+        shortCode: secondSlug,
+        userId: null,
+        clickCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockRepository.create.mockReturnValue(savedUrl as any);
+      mockRepository.save.mockResolvedValue(savedUrl);
+
+      const result = await service.create(createUrlDto);
+
+      expect(result).toBeDefined();
+      expect(repository.findOne).toHaveBeenCalledTimes(2);
+    });
+
+    it('should throw error after max attempts to generate unique slug', async () => {
+      const existingUrl = {
+        id: 'existing-id',
+        originalUrl: 'https://example.com',
+        shortCode: 'ABCDEF',
+        userId: 'user-123',
+        clickCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockRepository.findOne.mockResolvedValue(existingUrl);
+
+      const createUrlDto = {
+        originalUrl: 'https://newurl.com',
+      };
+
+      await expect(service.create(createUrlDto)).rejects.toThrow(
+        'Failed to generate unique slug after multiple attempts',
+      );
+
+      expect(repository.findOne).toHaveBeenCalled();
+    });
+  });
+
+  describe('toResponseDto - BASE_URL configuration', () => {
+    it('should use BASE_URL from config when available', async () => {
+      const customBaseUrl = 'https://short.link';
+      mockConfigService.get.mockReturnValue(customBaseUrl);
+
+      const createUrlDto = {
+        originalUrl: 'https://example.com',
+      };
+
+      const shortCode = 'ABC123';
+      const savedUrl = {
+        id: 'url-id',
+        originalUrl: createUrlDto.originalUrl,
+        shortCode,
+        userId: null,
+        clickCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockRepository.findOne.mockResolvedValue(null);
+      mockRepository.create.mockReturnValue(savedUrl as any);
+      mockRepository.save.mockResolvedValue(savedUrl);
+
+      const result = await service.create(createUrlDto);
+
+      expect(result.shortUrl).toBe(`${customBaseUrl}/${shortCode}`);
+    });
+
+    it('should use default BASE_URL when config not available', async () => {
+      mockConfigService.get.mockReturnValue(undefined);
+
+      const createUrlDto = {
+        originalUrl: 'https://example.com',
+      };
+
+      const shortCode = 'ABC123';
+      const savedUrl = {
+        id: 'url-id',
+        originalUrl: createUrlDto.originalUrl,
+        shortCode,
+        userId: null,
+        clickCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      mockRepository.findOne.mockResolvedValue(null);
+      mockRepository.create.mockReturnValue(savedUrl as any);
+      mockRepository.save.mockResolvedValue(savedUrl);
+
+      const result = await service.create(createUrlDto);
+
+      expect(result.shortUrl).toBe(`http://localhost:3000/${shortCode}`);
     });
   });
 });
