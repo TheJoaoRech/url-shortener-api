@@ -17,19 +17,30 @@ const consoleFormat = winston.format.combine(
   }),
 );
 
-export const loggerConfig = WinstonModule.createLogger({
-  transports: [
+const getTransports = () => {
+  const transports: winston.transport[] = [
     new winston.transports.Console({
       format: process.env.NODE_ENV === 'production' ? logFormat : consoleFormat,
     }),
-    new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
-      format: logFormat,
-    }),
-    new winston.transports.File({
-      filename: 'logs/combined.log',
-      format: logFormat,
-    }),
-  ],
+  ];
+
+  if (process.env.VERCEL !== '1' && process.env.NODE_ENV !== 'production') {
+    transports.push(
+      new winston.transports.File({
+        filename: 'logs/error.log',
+        level: 'error',
+        format: logFormat,
+      }),
+      new winston.transports.File({
+        filename: 'logs/combined.log',
+        format: logFormat,
+      }),
+    );
+  }
+
+  return transports;
+};
+
+export const loggerConfig = WinstonModule.createLogger({
+  transports: getTransports(),
 });
