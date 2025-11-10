@@ -7,10 +7,15 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
 @Entity('urls')
+@Index('idx_shortCode_active', ['shortCode'], {
+  unique: true,
+  where: '"deletedAt" IS NULL',
+})
 export class Url {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,7 +23,7 @@ export class Url {
   @Column({ type: 'text' })
   originalUrl: string;
 
-  @Column({ unique: true, length: 30 })
+  @Column({ length: 30 })
   shortCode: string;
 
   @Column({ type: 'uuid', nullable: true })
