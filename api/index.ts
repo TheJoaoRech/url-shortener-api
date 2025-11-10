@@ -56,15 +56,19 @@ const createNestServer = async (expressInstance: express.Express) => {
 
     app.enableCors();
 
-    const config = new DocumentBuilder()
-      .setTitle('URL Shortener API')
-      .setDescription('RESTful API for URL shortening with JWT authentication')
-      .setVersion('1.0')
-      .addBearerAuth()
-      .build();
+    if (process.env.ENABLE_SWAGGER !== 'false') {
+      const config = new DocumentBuilder()
+        .setTitle('URL Shortener API')
+        .setDescription(
+          'RESTful API for URL shortening with JWT authentication',
+        )
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build();
 
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document);
+      const document = SwaggerModule.createDocument(app, config);
+      SwaggerModule.setup('api/docs', app, document);
+    }
 
     console.log('Initializing NestJS application...');
     await app.init();
@@ -84,20 +88,7 @@ const createNestServer = async (expressInstance: express.Express) => {
 
 export default async (req: Request, res: Response) => {
   try {
-    const timeout = setTimeout(() => {
-      if (!cachedApp) {
-        console.error('Request timeout during initialization');
-        res.status(503).json({
-          error: 'Service Unavailable',
-          message:
-            'Application is still initializing. Please try again in a few seconds.',
-        });
-      }
-    }, 9000);
-
     await createNestServer(expressApp);
-    clearTimeout(timeout);
-
     return expressApp(req, res);
   } catch (error) {
     console.error('Error handling request:', error);
