@@ -52,13 +52,15 @@ const createNestServer = async (expressInstance: express.Express) => {
   return app;
 };
 
-// Initialize the app
-createNestServer(expressApp)
-  .then(() => console.log('Nest Ready'))
-  .catch((err) => console.error('Nest broken', err));
-
-// Export for Vercel
 export default async (req: Request, res: Response) => {
-  await createNestServer(expressApp);
-  expressApp(req, res);
+  try {
+    await createNestServer(expressApp);
+    return expressApp(req, res);
+  } catch (error) {
+    console.error('Error initializing NestJS app:', error);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 };
