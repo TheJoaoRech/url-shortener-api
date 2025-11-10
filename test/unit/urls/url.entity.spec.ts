@@ -84,4 +84,36 @@ describe('Url Entity', () => {
 
     expect(url.clickCount).toBe(2);
   });
+
+  it('should maintain relationship between URL and User', () => {
+    const url = new Url();
+    const user = new User();
+
+    user.id = 'user-456';
+    user.email = 'owner@example.com';
+    user.password = 'hashedPassword';
+
+    url.id = 'url-123';
+    url.shortCode = 'abc456';
+    url.originalUrl = 'https://test.com';
+    url.userId = user.id;
+    url.user = user;
+
+    expect(url.userId).toBe(user.id);
+    expect(url.user).toBe(user);
+    expect(url.user.email).toBe('owner@example.com');
+  });
+
+  it('should handle URL without user relationship', () => {
+    const url = new Url();
+
+    url.id = 'url-789';
+    url.shortCode = 'xyz123';
+    url.originalUrl = 'https://anonymous.com';
+    url.userId = null;
+    url.user = null;
+
+    expect(url.userId).toBeNull();
+    expect(url.user).toBeNull();
+  });
 });
