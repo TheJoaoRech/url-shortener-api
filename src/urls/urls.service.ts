@@ -26,6 +26,18 @@ export class UrlsService {
     'docs',
     'my-urls',
     'shorten',
+    'login',
+    'register',
+    'swagger',
+    'health',
+    'status',
+    'admin',
+    'user',
+    'users',
+    'dashboard',
+    'static',
+    'public',
+    'assets',
   ];
 
   constructor(
