@@ -24,6 +24,8 @@ import { CreateUrlDto } from './dto/create-url.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
 import { UrlResponseDto } from './dto/url-response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
+import { OptionalAuth } from '../auth/decorators/optional-auth.decorator';
 
 @ApiTags('urls')
 @Controller()
@@ -31,6 +33,7 @@ export class UrlsController {
   constructor(private readonly urlsService: UrlsService) {}
 
   @Post('shorten')
+  @UseGuards(OptionalJwtAuthGuard)
   @ApiOperation({ summary: 'Shorten a URL (with or without authentication)' })
   @ApiResponse({
     status: 201,
@@ -39,8 +42,8 @@ export class UrlsController {
   })
   @ApiResponse({ status: 409, description: 'Custom alias already in use' })
   @ApiBearerAuth()
-  async shorten(@Body() createUrlDto: CreateUrlDto, @Request() req: any) {
-    const userId = req.user?.userId;
+  async shorten(@Body() createUrlDto: CreateUrlDto, @OptionalAuth() user: any) {
+    const userId = user?.userId || null;
     return this.urlsService.create(createUrlDto, userId);
   }
 
