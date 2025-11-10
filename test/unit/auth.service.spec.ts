@@ -150,5 +150,45 @@ describe('AuthService', () => {
         mockUser.password,
       );
     });
+
+    it('should handle null user from findByEmail', async () => {
+      const loginDto = {
+        email: 'nonexistent@example.com',
+        password: 'password123',
+      };
+
+      mockUsersService.findByEmail.mockResolvedValue(null);
+
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(bcrypt.compare).not.toHaveBeenCalled();
+    });
+
+    it('should generate JWT token with correct payload structure', async () => {
+      const loginDto = {
+        email: 'test@example.com',
+        password: 'password123',
+      };
+
+      const mockUser = {
+        id: 'user-uuid-123',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      mockUsersService.findByEmail.mockResolvedValue(mockUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockJwtService.sign.mockReturnValue('generated-token');
+
+      await service.login(loginDto);
+
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        sub: mockUser.id,
+        email: mockUser.email,
+      });
+    });
   });
 });
