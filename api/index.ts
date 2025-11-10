@@ -10,57 +10,109 @@ import { INestApplication } from '@nestjs/common';
 
 const expressApp = express();
 let cachedApp: INestApplication | null = null;
+let isInitializing = false;
+let initializationError: Error | null = null;
 
 const createNestServer = async (expressInstance: express.Express) => {
   if (cachedApp) {
     return cachedApp;
   }
 
-  const app = await NestFactory.create(
-    AppModule,
-    new ExpressAdapter(expressInstance),
-    {
-      logger: loggerConfig,
-    },
-  );
+  if (isInitializing) {
+    let attempts = 0;
+    while (isInitializing && attempts < 50) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      attempts++;
+    }
+    if (cachedApp) return cachedApp;
+    if (initializationError) throw initializationError;
+  }
 
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  isInitializing = true;
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
+  try {
+    console.log('Starting NestJS application initialization...');
 
-  app.enableCors();
+    const app = await NestFactory.create(
+      AppModule,
+      new ExpressAdapter(expressInstance),
+      {
+        logger: loggerConfig,
+        abortOnError: false,
+      },
+    );
 
-  const config = new DocumentBuilder()
-    .setTitle('URL Shortener API')
-    .setDescription('RESTful API for URL shortening with JWT authentication')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+    console.log('NestJS application created successfully');
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+    app.useGlobalInterceptors(new LoggingInterceptor());
 
-  await app.init();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
 
-  cachedApp = app;
-  return app;
+    app.enableCors();
+
+    const config = new DocumentBuilder()
+      .setTitle('URL Shortener API')
+      .setDescription('RESTful API for URL shortening with JWT authentication')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+
+    console.log('Initializing NestJS application...');
+    await app.init();
+    console.log('NestJS application initialized successfully');
+
+    cachedApp = app;
+    isInitializing = false;
+    return app;
+  } catch (error) {
+    console.error('Fatal error during NestJS initialization:', error);
+    initializationError =
+      error instanceof Error ? error : new Error(String(error));
+    isInitializing = false;
+    throw error;
+  }
 };
 
 export default async (req: Request, res: Response) => {
   try {
+    const timeout = setTimeout(() => {
+      if (!cachedApp) {
+        console.error('Request timeout during initialization');
+        res.status(503).json({
+          error: 'Service Unavailable',
+          message:
+            'Application is still initializing. Please try again in a few seconds.',
+        });
+      }
+    }, 9000);
+
     await createNestServer(expressApp);
+    clearTimeout(timeout);
+
     return expressApp(req, res);
   } catch (error) {
-    console.error('Error initializing NestJS app:', error);
-    return res.status(500).json({
-      error: 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    });
+    console.error('Error handling request:', error);
+
+    if (!res.headersSent) {
+      return res.status(500).json({
+        error: 'Internal Server Error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack:
+          process.env.NODE_ENV === 'development'
+            ? error instanceof Error
+              ? error.stack
+              : undefined
+            : undefined,
+      });
+    }
   }
 };
