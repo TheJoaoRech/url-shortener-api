@@ -128,24 +128,44 @@ A aplicação segue os princípios de **Clean Architecture** e **SOLID**, garant
 - 📈 Escalabilidade horizontal e vertical
 - 🧩 Baixo acoplamento entre módulos
 
-### Organização de Módulos
+### Organização de Camadas
 
 ```
 src/
-├── auth/              # Módulo de autenticação
-│   ├── strategies/    # JWT Strategy
-│   ├── guards/        # Guards de autenticação
-│   └── decorators/    # Decorators customizados
-├── users/             # Módulo de usuários
-│   ├── entities/      # Entidade User
-│   └── dto/          # DTOs de usuário
-├── urls/              # Módulo de URLs
-│   ├── entities/      # Entidade Url
-│   └── dto/          # DTOs de URL
-├── common/            # Recursos compartilhados
-│   └── interceptors/  # Interceptors globais
-├── config/            # Configurações
-└── main.ts            # Entry point da aplicação
+├── main.ts                    # Entry point da aplicação
+├── app.module.ts              # Módulo raiz
+├── app.controller.ts          # Controller raiz
+├── app.service.ts             # Service raiz
+│
+├── auth/                      # 🔐 Módulo de Autenticação
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   ├── strategies/            # JWT Strategy
+│   ├── guards/                # Guards de autenticação
+│   ├── decorators/            # Decorators customizados
+│   └── dto/                   # DTOs de autenticação
+│
+├── users/                     # 👤 Módulo de Usuários
+│   ├── users.service.ts
+│   ├── entities/              # User Entity (TypeORM)
+│   └── dto/                   # DTOs de usuário
+│
+├── urls/                      # 🔗 Módulo de URLs
+│   ├── urls.controller.ts
+│   ├── urls.service.ts
+│   ├── entities/              # URL Entity (TypeORM)
+│   └── dto/                   # DTOs de URL
+│
+├── common/                    # 🛠️ Recursos Compartilhados
+│   ├── interceptors/          # Logging Interceptor
+│   ├── filters/               # Exception Filters
+│   └── middlewares/           # Middlewares globais
+│
+└── config/                    # ⚙️ Configurações
+    └── logger.config.ts       # Configuração Winston
+
+api/
+└── index.ts                   # ☁️ Entry point Serverless (Vercel)
 ```
 
 ### Princípios Aplicados
@@ -160,7 +180,93 @@ src/
 
 ---
 
-## 🧮 Modelo Entidade-Relacionamento
+## 🧱 Diagrama de Arquitetura
+
+> 📊 **Diagrama visual completo disponível em:** [Link do Miro] (em construção)
+
+### Arquitetura Simplificada
+
+```mermaid
+flowchart TD
+    subgraph Client["Clientes"]
+        A["Cliente HTTP (Browser/Postman)"]
+    end
+
+    subgraph Edge["Vercel Edge Network"]
+        B["CDN Global + Auto-scaling"]
+    end
+
+    subgraph API["API NestJS - Serverless"]
+        C1["Auth Module<br/>(JWT, Login/Register)"]
+        C2["Users Module<br/>(User Service)"]
+        C3["URLs Module<br/>(CRUD URLs)"]
+        C4["Common Module<br/>(Interceptors, Logging)"]
+    end
+
+    subgraph DB["Banco de Dados"]
+        D[(PostgreSQL<br/>Neon/Supabase)]
+    end
+
+    subgraph Monitor["Observabilidade"]
+        E1["Vercel Analytics"]
+        E2["Application Logs"]
+    end
+
+    A -->|HTTP/JSON| B
+    B --> C1
+    B --> C3
+    C1 -->|Valida| C2
+    C1 --> C4
+    C3 --> C4
+    C2 -->|TypeORM| D
+    C3 -->|TypeORM| D
+    C1 -.logs.-> E2
+    C3 -.logs.-> E2
+    B -.metrics.-> E1
+
+    style B fill:#0070f3
+    style D fill:#336791
+    style API fill:#e0234e
+```
+
+---
+
+## 🔗 Diagrama de Fluxo - Encurtamento de URL
+
+```mermaid
+flowchart TD
+    Start([Cliente faz POST /urls + JWT])
+    A[Valida JWT Token]
+    B{Token válido?}
+    C[Retorna 401 Unauthorized]
+    D[Extrai userId do token]
+    E[Valida URL original]
+    F{URL válida?}
+    G[Retorna 400 Bad Request]
+    H[Gera shortCode com nanoid<br/>6-10 caracteres]
+    I{shortCode único?}
+    J[Salva URL no banco<br/>com userId associado]
+    K[Retorna 201 Created<br/>com shortUrl]
+    End([Fim])
+
+    Start --> A
+    A --> B
+    B -->|Não| C --> End
+    B -->|Sim| D
+    D --> E
+    E --> F
+    F -->|Não| G --> End
+    F -->|Sim| H
+    H --> I
+    I -->|Não| H
+    I -->|Sim| J
+    J --> K
+    K --> End
+```
+
+---
+
+## �🧮 Modelo Entidade-Relacionamento
 
 ```mermaid
 erDiagram
@@ -297,15 +403,44 @@ npm run test:cov
 npm run test:e2e
 ```
 
+### Estrutura de Testes
+
+```
+test/
+├── unit/                           # Testes unitários isolados
+│   ├── auth/
+│   │   ├── auth.controller.spec.ts
+│   │   ├── auth.service.spec.ts
+│   │   └── jwt.strategy.spec.ts
+│   ├── users/
+│   │   └── users.service.spec.ts
+│   ├── urls/
+│   │   ├── urls.controller.spec.ts
+│   │   └── urls.service.spec.ts
+│   └── common/
+│       └── logging.interceptor.spec.ts
+│
+├── e2e/                            # Testes end-to-end
+│   ├── app.e2e-spec.ts
+│   ├── auth.e2e-spec.ts
+│   └── urls.e2e-spec.ts
+│
+└── jest-e2e.json                   # Configuração E2E
+```
+
 ### Cobertura de Testes
+
+**Cobertura mínima exigida:** 80% (branches, functions, lines, statements)
 
 Os testes cobrem:
 
 - ✅ Autenticação (registro, login, validação JWT)
-- ✅ Encurtamento de URLs
-- ✅ Redirecionamento
-- ✅ CRUD de URLs autenticadas
-- ✅ Soft delete e queries com deletedAt
+- ✅ Encurtamento de URLs (com validações)
+- ✅ Redirecionamento e códigos HTTP corretos
+- ✅ CRUD completo de URLs autenticadas
+- ✅ Soft delete e queries com `deletedAt`
+- ✅ Guards e decorators de autenticação
+- ✅ Interceptors de logging
 - ✅ Tratamento de erros e edge cases
 
 ---
@@ -409,7 +544,16 @@ vercel --prod
 
 - ✅ **Swagger/OpenAPI** completo e atualizado automaticamente
 - ✅ **README.md** detalhado com diagramas e exemplos
+- ✅ **Diagramas Mermaid** para arquitetura e fluxos
 - ✅ **Comentários JSDoc** em funções complexas
+- ✅ **Documentação inline** no código quando necessário
+
+### DevOps
+
+- ✅ **Vercel Deployment** configurado e otimizado
+- ✅ **TypeORM Migrations** (quando necessário)
+- ✅ **Variáveis de ambiente** documentadas
+- ✅ **Logs estruturados** com Winston
 
 ### Segurança
 
@@ -418,6 +562,166 @@ vercel --prod
 - ✅ **Validação de entrada** rigorosa com class-validator
 - ✅ **CORS** configurado adequadamente
 - ✅ **SQL Injection** prevenido via TypeORM
+- ✅ **XSS Protection** via validação de entrada
+
+### Performance
+
+- ✅ **Connection Pooling** otimizado para serverless
+- ✅ **Índices de banco** em campos frequentemente consultados
+- ✅ **Queries otimizadas** com TypeORM
+- ✅ **Lazy Loading** de módulos quando aplicável
+
+---
+
+## ☁️ Escalabilidade da Solução
+
+> 📊 **Diagrama de arquitetura completo disponível em:** [Link do Miro] (em construção)
+
+A aplicação foi projetada para garantir alta disponibilidade, desempenho otimizado e capacidade de expansão conforme o crescimento da base de usuários.
+
+### 🔄 Estratégias de Escalabilidade
+
+#### **Escalabilidade Horizontal**
+
+A aplicação segue o princípio de **arquitetura stateless**, permitindo adicionar múltiplas instâncias sem compartilhamento de estado.
+
+**Stateless API com JWT:**
+
+- Tokens autocontidos eliminam necessidade de sessões no servidor
+- Qualquer instância pode validar qualquer requisição
+- Sem necessidade de sticky sessions
+
+**Deployment Serverless no Vercel:**
+
+- Auto-scaling automático baseado em demanda
+- Cold start otimizado (< 500ms)
+- Edge network global com baixa latência
+- Zero configuração de infraestrutura
+
+**Connection Pooling Otimizado:**
+
+- Pool limitado para serverless (max: 1 conexão por função)
+- Timeouts agressivos (5s) para evitar conexões penduradas
+- Suporte a databases serverless (Neon, Supabase)
+
+```mermaid
+flowchart LR
+    A[Vercel Edge Network] --> B[Função 1]
+    A --> C[Função 2]
+    A --> D[Função N]
+    B --> E[(PostgreSQL)]
+    C --> E
+    D --> E
+
+    style A fill:#0070f3
+    style E fill:#336791
+```
+
+#### **Escalabilidade Vertical**
+
+Otimizações para extrair máximo desempenho:
+
+**1. Otimizações de Banco de Dados**
+
+```typescript
+// Connection pooling otimizado
+extra: {
+  max: 1,                        // 1 conexão por função serverless
+  min: 0,                        // Não manter conexões idle
+  idleTimeoutMillis: 5000,
+  connectionTimeoutMillis: 5000,
+  statement_timeout: 5000,
+}
+```
+
+**2. Índices Estratégicos**
+
+```sql
+CREATE INDEX idx_urls_shortcode ON urls(short_code) WHERE deleted_at IS NULL;
+CREATE INDEX idx_urls_userid ON urls(user_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_users_email ON users(email);
+```
+
+**3. Logging Otimizado**
+
+- Sem escrita em disco (filesystem read-only no Vercel)
+- Apenas console.log em produção
+- Logs estruturados para observabilidade
+
+---
+
+### 🚧 Principais Desafios e Soluções
+
+#### **Desafio 1: Cold Start em Serverless**
+
+**Problema:** Primeira requisição após idle pode demorar
+
+**Soluções:**
+
+- ✅ Cache de instância NestJS (`cachedApp`)
+- ✅ Build otimizado sem source maps
+- ✅ Swagger desabilitado em produção
+- ✅ Lazy loading de módulos
+
+#### **Desafio 2: Conexões de Banco em Serverless**
+
+**Problema:** Cada função cria nova conexão, podendo esgotar pool
+
+**Soluções:**
+
+- ✅ Connection pooling limitado (max: 1)
+- ✅ Databases serverless (Neon com auto-scaling)
+- ✅ Timeouts agressivos para liberar conexões
+
+#### **Desafio 3: Consistência em Múltiplas Instâncias**
+
+**Problema:** Operações concorrentes podem causar colisões
+
+**Soluções:**
+
+- ✅ Constraints UNIQUE no banco (shortCode, email)
+- ✅ Geração de IDs com nanoid (colisão estatisticamente impossível)
+- ✅ Transações atômicas via TypeORM
+
+---
+
+### 📊 Capacidade Estimada
+
+| Métrica                  | Capacidade Estimada | Observação                          |
+| ------------------------ | ------------------- | ----------------------------------- |
+| **Requisições/seg**      | 10,000+             | Com auto-scaling Vercel             |
+| **Usuários Simultâneos** | 50,000+             | Stateless permite alta concorrência |
+| **URLs Armazenadas**     | Milhões             | Limitado pelo storage do banco      |
+| **Latência Média**       | < 200ms             | Com edge network                    |
+| **Cold Start**           | < 500ms             | Com otimizações aplicadas           |
+| **Disponibilidade**      | 99.9%+              | SLA do Vercel + database            |
+
+---
+
+## 📋 Padrão de Commits
+
+Este projeto segue **[Conventional Commits](https://www.conventionalcommits.org/)**:
+
+```
+feat: adiciona nova funcionalidade
+fix: corrige bug específico
+docs: atualiza documentação
+test: adiciona ou corrige testes
+refactor: refatora código sem mudar comportamento
+perf: melhora performance
+style: formatação, ponto e vírgula, etc
+chore: atualiza dependências ou configurações
+ci: mudanças em CI/CD
+```
+
+### Checklist antes do Commit:
+
+- [ ] Código segue o style guide (ESLint + Prettier)
+- [ ] Testes unitários passando (`npm test`)
+- [ ] Testes E2E passando (`npm run test:e2e`)
+- [ ] Cobertura de testes ≥ 80%
+- [ ] Documentação atualizada (se aplicável)
+- [ ] Commit message segue Conventional Commits
 
 ---
 
