@@ -8,8 +8,8 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
-import { UrlsService } from '../../src/urls/urls.service';
-import { Url } from '../../src/urls/entities/url.entity';
+import { UrlsService } from '../../../src/urls/urls.service';
+import { Url } from '../../../src/urls/entities/url.entity';
 
 describe('UrlsService', () => {
   let service: UrlsService;

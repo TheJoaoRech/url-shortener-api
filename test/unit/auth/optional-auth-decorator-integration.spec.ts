@@ -1,8 +1,8 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExecutionContext } from '@nestjs/common';
-import { OptionalAuth } from '../../src/auth/decorators/optional-auth.decorator';
-import { OptionalJwtAuthGuard } from '../../src/auth/guards/optional-jwt-auth.guard';
+import { OptionalAuth } from '../../../src/auth/decorators/optional-auth.decorator';
+import { OptionalJwtAuthGuard } from '../../../src/auth/guards/optional-jwt-auth.guard';
 
 @Controller('test-decorator')
 class TestDecoratorController {

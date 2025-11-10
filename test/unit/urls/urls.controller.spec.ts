@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UrlsController } from '../../src/urls/urls.controller';
-import { UrlsService } from '../../src/urls/urls.service';
+import { UrlsController } from '../../../src/urls/urls.controller';
+import { UrlsService } from '../../../src/urls/urls.service';
 import { Response } from 'express';
 import { NotFoundException } from '@nestjs/common';
 

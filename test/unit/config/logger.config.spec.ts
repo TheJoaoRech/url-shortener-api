@@ -1,4 +1,4 @@
-import { loggerConfig } from '../../src/config/logger.config';
+import { loggerConfig } from '../../../src/config/logger.config';
 
 describe('Logger Config', () => {
   it('should export logger configuration', () => {
