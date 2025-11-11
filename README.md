@@ -180,54 +180,43 @@ api/
 
 ---
 
-## 🧱 Architecture Diagram
+## 🏗️ Architecture Diagram
 
-> 📊 **Complete visual diagram available at:** [Miro Link] (under construction)
+![Architecture Diagram](./docs/architecture-diagram.svg)
 
-### Simplified Architecture
+_Layered architecture showing the complete serverless stack:_
 
-```mermaid
-flowchart TD
-    subgraph Client["Clientes"]
-        A["Cliente HTTP (Browser/Postman)"]
-    end
+### **🌐 Client Layer**
 
-    subgraph Edge["Vercel Edge Network"]
-        B["CDN Global + Auto-scaling"]
-    end
+- Web Browsers, Mobile Apps, API Clients (Postman, cURL)
+- HTTP/HTTPS communication
 
-    subgraph API["API NestJS - Serverless"]
-        C1["Auth Module<br/>(JWT, Login/Register)"]
-        C2["Users Module<br/>(User Service)"]
-        C3["URLs Module<br/>(CRUD URLs)"]
-        C4["Common Module<br/>(Interceptors, Logging)"]
-    end
+### **⚡ Edge Layer (Vercel)**
 
-    subgraph DB["Database"]
-        D[(PostgreSQL<br/>Neon/Supabase)]
-    end
+- 🌍 CDN Global Distribution
+- 🚀 Auto-scaling serverless functions
+- 🛡️ DDoS Protection
+- 🔒 SSL/TLS Termination
 
-    subgraph Monitor["Observability"]
-        E1["Vercel Analytics"]
-        E2["Application Logs"]
-    end
+### **🔴 API Layer (NestJS Modules)**
 
-    A -->|HTTP/JSON| B
-    B --> C1
-    B --> C3
-    C1 -->|Valida| C2
-    C1 --> C4
-    C3 --> C4
-    C2 -->|TypeORM| D
-    C3 -->|TypeORM| D
-    C1 -.logs.-> E2
-    C3 -.logs.-> E2
-    B -.metrics.-> E1
+- **Auth Module** - JWT Strategy, Login/Register, bcrypt password hashing
+- **Users Module** - User Management, CRUD operations, soft delete
+- **URLs Module** - URL shortening, redirection (302), nanoid generation
+- **Common Module** - Winston logging, Interceptors, Rate Limiting, CORS, Helmet
+- **Redis Cache** _(future)_ - Cache layer for URLs
 
-    style B fill:#0070f3
-    style D fill:#336791
-    style API fill:#e0234e
-```
+### **🐘 Data Layer**
+
+- PostgreSQL (Neon/Supabase) with TypeORM
+- Connection Pooling optimized for serverless
+- Tables: `users` (1:N) `urls` with soft delete support
+
+### **📊 Observability**
+
+- Vercel Analytics (edge metrics)
+- Application Logs (Winston)
+- Error Tracking
 
 ---
 

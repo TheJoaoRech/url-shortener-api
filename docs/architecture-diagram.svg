@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <title>URL Shortener API Architecture</title>
+  <rect width="1600" height="1000" fill="#0d1117"/>
+
+  <g>
+    <rect x="50" y="50" width="1500" height="100" rx="15" fill="#1f2937" stroke="#2563eb" stroke-width="2"/>
+    <text x="800" y="90" text-anchor="middle" fill="#93c5fd" font-size="24">Client Layer</text>
+    <text x="150" y="125" fill="#e5e7eb" font-size="18">🌐 Web Browsers</text>
+    <text x="400" y="125" fill="#e5e7eb" font-size="18">📱 Mobile Apps</text>
+    <text x="650" y="125" fill="#e5e7eb" font-size="18">⚙️ API Clients (Postman, cURL)</text>
+    <text x="1000" y="125" fill="#e5e7eb" font-size="18">HTTP/HTTPS Requests</text>
+  </g>
+
+  <g>
+    <rect x="50" y="180" width="1500" height="100" rx="15" fill="#111827" stroke="#3b82f6" stroke-width="2"/>
+    <text x="800" y="220" text-anchor="middle" fill="#93c5fd" font-size="24">Edge Layer (Vercel)</text>
+    <text x="150" y="255" fill="#e5e7eb" font-size="18">🌎 CDN Global Distribution</text>
+    <text x="500" y="255" fill="#e5e7eb" font-size="18">⚡ Auto-scaling</text>
+    <text x="800" y="255" fill="#e5e7eb" font-size="18">🛡️ DDoS Protection</text>
+    <text x="1100" y="255" fill="#e5e7eb" font-size="18">🔒 SSL/TLS Termination</text>
+  </g>
+
+  <g>
+    <rect x="50" y="310" width="1500" height="350" rx="15" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+    <text x="800" y="345" text-anchor="middle" fill="#fca5a5" font-size="24">API Layer (NestJS)</text>
+
+    <rect x="100" y="380" width="300" height="120" rx="10" fill="#b91c1c"/>
+    <text x="250" y="410" text-anchor="middle" fill="#fff" font-size="20">Auth Module</text>
+    <text x="250" y="440" text-anchor="middle" fill="#fcd34d" font-size="16">JWT Strategy, Login/Register</text>
+    <text x="250" y="465" text-anchor="middle" fill="#fcd34d" font-size="16">Password Hashing (bcrypt)</text>
+
+    <rect x="450" y="380" width="300" height="120" rx="10" fill="#dc2626"/>
+    <text x="600" y="410" text-anchor="middle" fill="#fff" font-size="20">Users Module</text>
+    <text x="600" y="440" text-anchor="middle" fill="#fcd34d" font-size="16">User Management, CRUD</text>
+
+    <rect x="800" y="380" width="300" height="120" rx="10" fill="#f87171"/>
+    <text x="950" y="410" text-anchor="middle" fill="#fff" font-size="20">URLs Module</text>
+    <text x="950" y="440" text-anchor="middle" fill="#fcd34d" font-size="16">Shortening, Redirection</text>
+    <text x="950" y="465" text-anchor="middle" fill="#fcd34d" font-size="16">NanoID Generation</text>
+
+    <rect x="1150" y="380" width="300" height="120" rx="10" fill="#991b1b"/>
+    <text x="1300" y="410" text-anchor="middle" fill="#fff" font-size="20">Common Module</text>
+    <text x="1300" y="440" text-anchor="middle" fill="#fcd34d" font-size="16">Logging (Winston), Interceptors</text>
+    <text x="1300" y="465" text-anchor="middle" fill="#fcd34d" font-size="16">Rate Limiting, CORS, Helmet</text>
+
+    <rect x="1150" y="530" width="300" height="80" rx="10" fill="none" stroke="#64748b" stroke-dasharray="8" stroke-width="2"/>
+    <text x="1300" y="565" text-anchor="middle" fill="#93c5fd" font-size="18">🧠 Redis (Future)</text>
+    <text x="1300" y="590" text-anchor="middle" fill="#93c5fd" font-size="16">Cache Layer for URLs</text>
+  </g>
+
+  <g>
+    <rect x="50" y="700" width="1500" height="150" rx="15" fill="#0f172a" stroke="#2563eb" stroke-width="2"/>
+    <text x="800" y="740" text-anchor="middle" fill="#93c5fd" font-size="24">Data Layer</text>
+    <text x="150" y="780" fill="#e5e7eb" font-size="18">🗄️ PostgreSQL (Neon/Supabase)</text>
+    <text x="600" y="780" fill="#e5e7eb" font-size="18">🔗 TypeORM ORM</text>
+    <text x="950" y="780" fill="#e5e7eb" font-size="18">🔄 Connection Pooling (Optimized)</text>
+    <text x="1300" y="780" fill="#e5e7eb" font-size="18">👥 Tables: users ⇄ urls</text>
+  </g>
+
+  <g>
+    <rect x="50" y="880" width="1500" height="80" rx="15" fill="#1f2937" stroke="#3b82f6" stroke-width="2"/>
+    <text x="800" y="905" text-anchor="middle" fill="#93c5fd" font-size="24">Observability</text>
+    <text x="150" y="940" fill="#e5e7eb" font-size="18">📊 Vercel Analytics</text>
+    <text x="600" y="940" fill="#e5e7eb" font-size="18">🪵 Application Logs (Winston)</text>
+    <text x="1100" y="940" fill="#e5e7eb" font-size="18">🐞 Error Tracking</text>
+  </g>
+</svg>
