@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { customAlphabet } from 'nanoid';
 import { Url } from './entities/url.entity';
@@ -144,13 +144,10 @@ export class UrlsService {
   }
 
   private async generateUniqueSlug(): Promise<string> {
-    let slug: string;
-    let attempts = 0;
     const maxAttempts = 10;
 
-    do {
-      slug = this.nanoid();
-      attempts++;
+    for (let attempts = 0; attempts < maxAttempts; attempts++) {
+      const slug = this.nanoid();
 
       const existing = await this.urlsRepository.findOne({
         where: { shortCode: slug },
@@ -160,13 +157,9 @@ export class UrlsService {
       if (!existing) {
         return slug;
       }
+    }
 
-      if (attempts >= maxAttempts) {
-        throw new Error(
-          'Failed to generate unique slug after multiple attempts',
-        );
-      }
-    } while (true);
+    throw new Error('Failed to generate unique slug after multiple attempts');
   }
 
   private toResponseDto(url: Url): UrlResponseDto {
