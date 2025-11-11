@@ -17,13 +17,14 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should redirect to /api/docs', () => {
+      const redirectMock = jest.fn();
       const mockResponse = {
-        redirect: jest.fn(),
+        redirect: redirectMock,
       } as unknown as Response;
 
       appController.redirectToDocs(mockResponse);
 
-      expect(mockResponse.redirect).toHaveBeenCalledWith('/api/docs');
+      expect(redirectMock).toHaveBeenCalledWith('/api/docs');
     });
   });
 
