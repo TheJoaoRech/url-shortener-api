@@ -10,6 +10,7 @@
     "build:vercel": "tsc -p tsconfig.vercel.json",
     "vercel-build": "tsc -p tsconfig.vercel.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
