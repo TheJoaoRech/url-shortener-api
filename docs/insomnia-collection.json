@@ -1,0 +1,237 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-11-11T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_url_shortener",
+      "_type": "workspace",
+      "name": "URL Shortener API",
+      "description": "Complete workspace for testing the URL Shortener API",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "name": "Base Environment",
+      "data": {
+        "baseUrl": "http://localhost:3000",
+        "token": "",
+        "urlId": "",
+        "shortCode": ""
+      },
+      "parentId": "wrk_url_shortener"
+    },
+    {
+      "_id": "folder_auth",
+      "_type": "request_group",
+      "name": "Auth",
+      "description": "Authentication endpoints for user registration and login",
+      "environment": {},
+      "parentId": "wrk_url_shortener"
+    },
+    {
+      "_id": "req_register",
+      "_type": "request",
+      "name": "Register User",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/auth/register",
+      "description": "Register a new user account. Password must be at least 6 characters.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parentId": "folder_auth"
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/auth/login",
+      "description": "Authenticate with email and password. Returns JWT token.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parentId": "folder_auth"
+    },
+    {
+      "_id": "folder_urls",
+      "_type": "request_group",
+      "name": "URLs",
+      "description": "URL shortening and management endpoints",
+      "environment": {},
+      "parentId": "wrk_url_shortener"
+    },
+    {
+      "_id": "req_shorten_auth",
+      "_type": "request",
+      "name": "Shorten URL (Authenticated)",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/shorten",
+      "description": "Shorten a URL with authentication. The URL will be associated with your user account.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"originalUrl\": \"https://github.com/TheJoaoRech/url-shortener-api\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_urls"
+    },
+    {
+      "_id": "req_shorten_custom",
+      "_type": "request",
+      "name": "Shorten URL with Custom Alias",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/shorten",
+      "description": "Shorten a URL with a custom alias (3-30 characters, lowercase, numbers, dash, underscore).",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"originalUrl\": \"https://teddy360.com.br/material/marco-legal-das-garantias-sancionado-entenda-o-que-muda/\",\n  \"customAlias\": \"teddy-legal\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_urls"
+    },
+    {
+      "_id": "req_shorten_anon",
+      "_type": "request",
+      "name": "Shorten URL (Anonymous)",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/shorten",
+      "description": "Shorten a URL without authentication. Anonymous URLs cannot be edited or deleted later.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"originalUrl\": \"https://nestjs.com\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parentId": "folder_urls"
+    },
+    {
+      "_id": "req_get_my_urls",
+      "_type": "request",
+      "name": "Get My URLs",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/my-urls",
+      "description": "List all URLs created by the authenticated user. Soft-deleted URLs are excluded.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_urls"
+    },
+    {
+      "_id": "req_update_url",
+      "_type": "request",
+      "name": "Update URL",
+      "method": "PUT",
+      "url": "{{ _.baseUrl }}/my-urls/{{ _.urlId }}",
+      "description": "Update the destination URL. The short code remains the same. Only the owner can update.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"originalUrl\": \"https://github.com/TheJoaoRech/url-shortener-api/tree/main\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_urls"
+    },
+    {
+      "_id": "req_delete_url",
+      "_type": "request",
+      "name": "Delete URL (Soft Delete)",
+      "method": "DELETE",
+      "url": "{{ _.baseUrl }}/my-urls/{{ _.urlId }}",
+      "description": "Soft delete a URL. The URL will no longer redirect and returns 404. The short code can be reused.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_urls"
+    },
+    {
+      "_id": "req_redirect",
+      "_type": "request",
+      "name": "Redirect to Original URL",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/{{ _.shortCode }}",
+      "description": "Public endpoint that redirects to the original URL using the short code. Increments click counter automatically.",
+      "headers": [],
+      "parentId": "folder_urls"
+    },
+    {
+      "_id": "folder_health",
+      "_type": "request_group",
+      "name": "Health",
+      "description": "Health check and status endpoints",
+      "environment": {},
+      "parentId": "wrk_url_shortener"
+    },
+    {
+      "_id": "req_health",
+      "_type": "request",
+      "name": "Health Check",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/health",
+      "description": "Check if the API is running and healthy.",
+      "headers": [],
+      "parentId": "folder_health"
+    },
+    {
+      "_id": "req_root",
+      "_type": "request",
+      "name": "Root",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/",
+      "description": "API welcome endpoint with basic information.",
+      "headers": [],
+      "parentId": "folder_health"
+    }
+  ]
+}
