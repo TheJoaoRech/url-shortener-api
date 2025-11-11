@@ -30,7 +30,7 @@ import { UrlsModule } from './urls/urls.module';
           type: 'postgres',
           url: databaseUrl,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: nodeEnv === 'development',
+          synchronize: nodeEnv === 'development' || nodeEnv === 'test',
           logging: false,
           ssl: nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
           connectTimeoutMS: 5000,
