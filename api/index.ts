@@ -103,6 +103,12 @@ const createNestServer = async (expressInstance: express.Express) => {
         defaultModelsExpandDepth: 1,
         defaultModelExpandDepth: 1,
       },
+      customCssUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.5/swagger-ui.min.css',
+      customJs: [
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.5/swagger-ui-bundle.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.5/swagger-ui-standalone-preset.min.js',
+      ],
     });
 
     console.log('Initializing NestJS application...');
