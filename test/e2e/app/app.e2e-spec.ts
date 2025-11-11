@@ -20,11 +20,26 @@ describe('App E2E Tests', () => {
   });
 
   describe('GET /', () => {
-    it('should return Hello World', () => {
+    it('should redirect to /api/docs', () => {
       return request(app.getHttpServer())
         .get('/')
+        .expect(302)
+        .expect('Location', '/api/docs');
+    });
+  });
+
+  describe('GET /api', () => {
+    it('should return API information', () => {
+      return request(app.getHttpServer())
+        .get('/api')
         .expect(200)
-        .expect('Hello World!');
+        .expect((res) => {
+          expect(res.body).toHaveProperty('name', 'URL Shortener API');
+          expect(res.body).toHaveProperty('version', '2.0');
+          expect(res.body).toHaveProperty('description');
+          expect(res.body).toHaveProperty('documentation', '/api/docs');
+          expect(res.body).toHaveProperty('repository');
+        });
     });
   });
 
