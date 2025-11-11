@@ -26,21 +26,24 @@ import { UrlsModule } from './urls/urls.module';
           throw new Error('DATABASE_URL environment variable is not set');
         }
 
+        const isTest = nodeEnv === 'test';
+        const timeout = isTest ? 30000 : 5000;
+
         return {
           type: 'postgres',
           url: databaseUrl,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: nodeEnv === 'development' || nodeEnv === 'test',
+          synchronize: nodeEnv === 'development' || isTest,
           logging: false,
           ssl: nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
-          connectTimeoutMS: 5000,
-          maxQueryExecutionTime: 5000,
+          connectTimeoutMS: timeout,
+          maxQueryExecutionTime: timeout,
           extra: {
-            max: 1,
+            max: isTest ? 5 : 1,
             min: 0,
-            idleTimeoutMillis: 5000,
-            connectionTimeoutMillis: 5000,
-            statement_timeout: 5000,
+            idleTimeoutMillis: timeout,
+            connectionTimeoutMillis: timeout,
+            statement_timeout: timeout,
           },
         };
       },

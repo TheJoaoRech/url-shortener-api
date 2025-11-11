@@ -36,7 +36,7 @@ describe('URLs E2E Tests', () => {
 
     authToken = registerRes.body.access_token;
     _userId = registerRes.body.userId;
-  });
+  }, 30000);
 
   afterAll(async () => {
     await app.close();

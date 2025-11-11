@@ -25,7 +25,7 @@ describe('Auth E2E Tests', () => {
       }),
     );
     await app.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await app.close();

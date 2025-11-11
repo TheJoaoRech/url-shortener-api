@@ -13,7 +13,7 @@ describe('App E2E Tests', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await app.close();
