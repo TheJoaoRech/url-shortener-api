@@ -650,8 +650,6 @@ vercel --prod
 
 ## ☁️ Scalability Solution
 
-> 📊 **Complete architecture diagram available at:** [Miro Link] (under construction)
-
 The application was designed to ensure high availability, optimized performance, and expansion capacity as the user base grows.
 
 ### 🔄 Scalability Strategies
