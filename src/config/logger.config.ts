@@ -13,7 +13,8 @@ const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.printf(({ timestamp, level, message, context, ...meta }) => {
     const metaStr = Object.keys(meta).length ? JSON.stringify(meta) : '';
-    return `${timestamp} [${context || 'Application'}] ${level}: ${message} ${metaStr}`;
+    const contextStr = typeof context === 'string' ? context : 'Application';
+    return `${timestamp} [${contextStr}] ${level}: ${message} ${metaStr}`;
   }),
 );
 
