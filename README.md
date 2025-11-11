@@ -624,10 +624,9 @@ Optimizations to extract maximum performance:
 **1. Database Optimizations**
 
 ```typescript
-// Optimized connection pooling
 extra: {
-  max: 1,                        // 1 connection per serverless function
-  min: 0,                        // Don't keep idle connections
+  max: 1,
+  min: 0,
   idleTimeoutMillis: 5000,
   connectionTimeoutMillis: 5000,
   statement_timeout: 5000,
@@ -695,33 +694,6 @@ CREATE INDEX idx_users_email ON users(email);
 | **Average Latency**    | < 200ms            | With edge network                 |
 | **Cold Start**         | < 500ms            | With applied optimizations        |
 | **Availability**       | 99.9%+             | Vercel + database SLA             |
-
----
-
-## 📋 Commit Pattern
-
-This project follows **[Conventional Commits](https://www.conventionalcommits.org/)**:
-
-```
-feat: adds new feature
-fix: fixes specific bug
-docs: updates documentation
-test: adds or fixes tests
-refactor: refactors code without changing behavior
-perf: improves performance
-style: formatting, semicolons, etc
-chore: updates dependencies or configurations
-ci: changes in CI/CD
-```
-
-### Checklist before Commit:
-
-- [ ] Code follows style guide (ESLint + Prettier)
-- [ ] Unit tests passing (`npm test`)
-- [ ] E2E tests passing (`npm run test:e2e`)
-- [ ] Test coverage ≥ 80%
-- [ ] Documentation updated (if applicable)
-- [ ] Commit message follows Conventional Commits
 
 ---
 
