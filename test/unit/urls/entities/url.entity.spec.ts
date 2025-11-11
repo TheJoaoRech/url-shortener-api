@@ -1,5 +1,5 @@
-import { Url } from '../../../src/urls/entities/url.entity';
-import { User } from '../../../src/users/entities/user.entity';
+import { Url } from '../../../../src/urls/entities/url.entity';
+import { User } from '../../../../src/users/entities/user.entity';
 
 describe('Url Entity', () => {
   it('should create an instance of Url', () => {

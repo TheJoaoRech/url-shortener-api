@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { UsersService } from '../../../src/users/users.service';
-import { User } from '../../../src/users/entities/user.entity';
+import { UsersService } from '../../../../src/users/users.service';
+import { User } from '../../../../src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('bcrypt');

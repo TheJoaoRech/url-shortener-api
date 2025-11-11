@@ -1,5 +1,5 @@
 import { ExecutionContext } from '@nestjs/common';
-import { OptionalJwtAuthGuard } from '../../../src/auth/guards/optional-jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../../../../src/auth/guards/optional-jwt-auth.guard';
 
 describe('OptionalJwtAuthGuard', () => {
   let guard: OptionalJwtAuthGuard;
