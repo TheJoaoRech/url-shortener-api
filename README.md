@@ -182,9 +182,9 @@ api/
 
 ## 🏗️ Architecture Diagram
 
-![Architecture Diagram](./docs/architecture-diagram.svg)
-
 _Layered architecture showing the complete serverless stack:_
+
+![Architecture Diagram](./docs/architecture-diagram.svg)
 
 ### **🌐 Client Layer**
 
