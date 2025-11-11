@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, Res } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AppService } from './app.service';
+import { Response } from 'express';
 
 @ApiTags('health')
 @Controller()
@@ -8,9 +9,21 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Health check endpoint' })
-  getHello(): string {
-    return this.appService.getHello();
+  @ApiExcludeEndpoint()
+  redirectToDocs(@Res() res: Response): void {
+    res.redirect('/api/docs');
+  }
+
+  @Get('api')
+  @ApiOperation({ summary: 'API info and redirect to documentation' })
+  getApiInfo() {
+    return {
+      name: 'URL Shortener API',
+      version: '2.0',
+      description: 'RESTful API for URL shortening with JWT authentication',
+      documentation: '/api/docs',
+      repository: 'https://github.com/TheJoaoRech/url-shortener-api',
+    };
   }
 
   @Get('health')

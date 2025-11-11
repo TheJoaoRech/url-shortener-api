@@ -58,13 +58,48 @@ const createNestServer = async (expressInstance: express.Express) => {
 
     const config = new DocumentBuilder()
       .setTitle('URL Shortener API')
-      .setDescription('RESTful API for URL shortening with JWT authentication')
+      .setDescription(
+        '🔗 A modern URL shortening service with JWT authentication, built with NestJS, TypeScript, and PostgreSQL!\n\n' +
+          '**Features:**\n' +
+          '- User authentication with JWT\n' +
+          '- URL shortening with random or custom aliases\n' +
+          '- Click tracking for each URL\n' +
+          '- Update and soft delete URLs\n' +
+          '- Public redirection endpoint (no auth required)\n' +
+          '- Soft delete with alias reuse capability\n\n' +
+          '**Getting Started:**\n' +
+          '1. Register a user at `/auth/register`\n' +
+          '2. Login at `/auth/login` to get your JWT token\n' +
+          '3. Click the "Authorize" button and enter: `Bearer <your-token>`\n' +
+          '4. Start shortening URLs!\n\n' +
+          '**Repository:** https://github.com/TheJoaoRech/url-shortener-api',
+      )
       .setVersion('2.0')
-      .addBearerAuth()
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'JWT',
+          description: 'Enter your JWT token in the format: Bearer <token>',
+        },
+        'JWT',
+      )
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document);
+    SwaggerModule.setup('api/docs', app, document, {
+      customSiteTitle: 'URL Shortener API',
+      customfavIcon: 'https://nestjs.com/img/logo-small.svg',
+      customCss: '.swagger-ui .topbar { display: none }',
+      swaggerOptions: {
+        persistAuthorization: true,
+        displayRequestDuration: true,
+        filter: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+      },
+    });
 
     console.log('Initializing NestJS application...');
     await app.init();
