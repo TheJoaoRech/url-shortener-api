@@ -4,7 +4,6 @@ import {
   IsUrl,
   IsOptional,
   Matches,
-  Length,
   MaxLength,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
