@@ -7,7 +7,6 @@ import { mockUser } from '../mocks/user.mock';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
-  let usersService: UsersService;
 
   const mockUsersService = {
     findOne: jest.fn(),
@@ -33,7 +32,6 @@ describe('JwtStrategy', () => {
     }).compile();
 
     strategy = module.get<JwtStrategy>(JwtStrategy);
-    usersService = module.get<UsersService>(UsersService);
   });
 
   afterEach(() => {
@@ -51,7 +49,7 @@ describe('JwtStrategy', () => {
         userId: mockUser.id,
         email: mockUser.email,
       });
-      expect(usersService.findOne).toHaveBeenCalledWith(mockUser.id);
+      expect(mockUsersService.findOne).toHaveBeenCalledWith(mockUser.id);
     });
 
     it('should throw UnauthorizedException when user does not exist', async () => {
@@ -61,7 +59,7 @@ describe('JwtStrategy', () => {
       await expect(strategy.validate(payload)).rejects.toThrow(
         UnauthorizedException,
       );
-      expect(usersService.findOne).toHaveBeenCalledWith('non-existent-id');
+      expect(mockUsersService.findOne).toHaveBeenCalledWith('non-existent-id');
     });
 
     it('should handle undefined user gracefully', async () => {

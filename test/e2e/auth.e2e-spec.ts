@@ -5,7 +5,7 @@ import { AppModule } from '../../src/app.module';
 
 describe('Auth E2E Tests', () => {
   let app: INestApplication;
-  let authToken: string;
+  let _authToken: string;
   const testUser = {
     email: `test-${Date.now()}@example.com`,
     password: 'Password123!',
@@ -41,7 +41,7 @@ describe('Auth E2E Tests', () => {
           expect(res.body).toHaveProperty('access_token');
           expect(res.body).toHaveProperty('email', testUser.email);
           expect(res.body).toHaveProperty('userId');
-          authToken = res.body.access_token;
+          _authToken = res.body.access_token;
         });
     });
 

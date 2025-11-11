@@ -3,10 +3,10 @@ import { loggerConfig } from '../../../src/config/logger.config';
 describe('Logger Config', () => {
   it('should export logger configuration', () => {
     expect(loggerConfig).toBeDefined();
-    expect(loggerConfig.log).toBeDefined();
-    expect(loggerConfig.error).toBeDefined();
-    expect(loggerConfig.warn).toBeDefined();
-    expect(loggerConfig.debug).toBeDefined();
+    expect(typeof loggerConfig.log).toBe('function');
+    expect(typeof loggerConfig.error).toBe('function');
+    expect(typeof loggerConfig.warn).toBe('function');
+    expect(typeof loggerConfig.debug).toBe('function');
   });
 
   it('should be a Winston logger instance', () => {

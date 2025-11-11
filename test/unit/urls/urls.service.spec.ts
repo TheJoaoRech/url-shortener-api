@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Repository } from 'typeorm';
 import {
   ConflictException,
   NotFoundException,
@@ -13,7 +12,6 @@ import { Url } from '../../../src/urls/entities/url.entity';
 
 describe('UrlsService', () => {
   let service: UrlsService;
-  let repository: Repository<Url>;
 
   const mockRepository = {
     findOne: jest.fn(),
@@ -45,7 +43,6 @@ describe('UrlsService', () => {
     }).compile();
 
     service = module.get<UrlsService>(UrlsService);
-    repository = module.get<Repository<Url>>(getRepositoryToken(Url));
   });
 
   afterEach(() => {
@@ -77,7 +74,7 @@ describe('UrlsService', () => {
 
       expect(result).toHaveProperty('shortUrl');
       expect(result.shortCode).toMatch(/^[A-Za-z0-9]{6}$/);
-      expect(repository.save).toHaveBeenCalled();
+      expect(mockRepository.save).toHaveBeenCalled();
     });
 
     it('should create URL with custom alias for authenticated user', async () => {
@@ -105,7 +102,7 @@ describe('UrlsService', () => {
       const result = await service.create(createUrlDto, userId);
 
       expect(result.shortCode).toBe('meu-github');
-      expect(repository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { shortCode: 'meu-github' },
         withDeleted: false,
       });
@@ -166,7 +163,7 @@ describe('UrlsService', () => {
       const result = await service.findOneByShortCode(shortCode);
 
       expect(result).toEqual(mockUrl);
-      expect(repository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { shortCode },
       });
     });
@@ -188,7 +185,7 @@ describe('UrlsService', () => {
 
       await service.incrementClickCount(urlId);
 
-      expect(repository.increment).toHaveBeenCalledWith(
+      expect(mockRepository.increment).toHaveBeenCalledWith(
         { id: urlId },
         'clickCount',
         1,
@@ -227,7 +224,7 @@ describe('UrlsService', () => {
       const result = await service.findAllByUser(userId);
 
       expect(result).toHaveLength(2);
-      expect(repository.find).toHaveBeenCalledWith({
+      expect(mockRepository.find).toHaveBeenCalledWith({
         where: { userId },
         order: { createdAt: 'DESC' },
       });
@@ -253,10 +250,10 @@ describe('UrlsService', () => {
 
       await service.remove(urlId, userId);
 
-      expect(repository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: urlId },
       });
-      expect(repository.softDelete).toHaveBeenCalledWith(urlId);
+      expect(mockRepository.softDelete).toHaveBeenCalledWith(urlId);
     });
 
     it('should throw NotFoundException if URL not found', async () => {
@@ -290,7 +287,7 @@ describe('UrlsService', () => {
       await expect(service.remove(urlId, userId)).rejects.toThrow(
         ForbiddenException,
       );
-      expect(repository.softDelete).not.toHaveBeenCalled();
+      expect(mockRepository.softDelete).not.toHaveBeenCalled();
     });
   });
 
@@ -321,7 +318,9 @@ describe('UrlsService', () => {
       const result = await service.update(urlId, updateUrlDto, userId);
 
       expect(result.originalUrl).toBe('https://new-url.com');
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: urlId } });
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { id: urlId },
+      });
     });
 
     it('should throw NotFoundException if URL not found for update', async () => {
@@ -404,7 +403,7 @@ describe('UrlsService', () => {
       const result = await service.create(createUrlDto);
 
       expect(result).toBeDefined();
-      expect(repository.findOne).toHaveBeenCalledTimes(2);
+      expect(mockRepository.findOne).toHaveBeenCalledTimes(2);
     });
 
     it('should throw error after max attempts to generate unique slug', async () => {
@@ -429,7 +428,7 @@ describe('UrlsService', () => {
         'Failed to generate unique slug after multiple attempts',
       );
 
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(mockRepository.findOne).toHaveBeenCalled();
     });
   });
 

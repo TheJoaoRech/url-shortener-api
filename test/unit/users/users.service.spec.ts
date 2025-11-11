@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../../../src/users/users.service';
 import { User } from '../../../src/users/entities/user.entity';
@@ -10,7 +9,6 @@ jest.mock('bcrypt');
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
 
   const mockRepository = {
     findOne: jest.fn(),
@@ -30,7 +28,6 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   afterEach(() => {
@@ -61,15 +58,15 @@ describe('UsersService', () => {
       const result = await service.create(createUserDto);
 
       expect(result).toEqual(mockUser);
-      expect(repository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { email: createUserDto.email },
       });
       expect(bcrypt.hash).toHaveBeenCalledWith(createUserDto.password, 10);
-      expect(repository.create).toHaveBeenCalledWith({
+      expect(mockRepository.create).toHaveBeenCalledWith({
         email: createUserDto.email,
         password: hashedPassword,
       });
-      expect(repository.save).toHaveBeenCalledWith(mockUser);
+      expect(mockRepository.save).toHaveBeenCalledWith(mockUser);
     });
 
     it('should throw ConflictException if email already exists', async () => {
@@ -91,7 +88,7 @@ describe('UsersService', () => {
       await expect(service.create(createUserDto)).rejects.toThrow(
         ConflictException,
       );
-      expect(repository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { email: createUserDto.email },
       });
     });
@@ -113,7 +110,7 @@ describe('UsersService', () => {
       const result = await service.findByEmail(email);
 
       expect(result).toEqual(mockUser);
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { email } });
+      expect(mockRepository.findOne).toHaveBeenCalledWith({ where: { email } });
     });
 
     it('should return null when user not found', async () => {
@@ -124,7 +121,7 @@ describe('UsersService', () => {
       const result = await service.findByEmail(email);
 
       expect(result).toBeNull();
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { email } });
+      expect(mockRepository.findOne).toHaveBeenCalledWith({ where: { email } });
     });
   });
 
@@ -144,7 +141,7 @@ describe('UsersService', () => {
       const result = await service.findOne(userId);
 
       expect(result).toEqual(mockUser);
-      expect(repository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
       });
     });
@@ -154,7 +151,7 @@ describe('UsersService', () => {
       mockRepository.findOne.mockResolvedValue(null);
 
       await expect(service.findOne(userId)).rejects.toThrow(NotFoundException);
-      expect(repository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
       });
     });

@@ -6,7 +6,7 @@ import { AppModule } from '../../src/app.module';
 describe('URLs E2E Tests', () => {
   let app: INestApplication;
   let authToken: string;
-  let userId: string;
+  let _userId: string;
   let createdUrlId: string;
   let shortCode: string;
 
@@ -35,7 +35,7 @@ describe('URLs E2E Tests', () => {
       .send(testUser);
 
     authToken = registerRes.body.access_token;
-    userId = registerRes.body.userId;
+    _userId = registerRes.body.userId;
   });
 
   afterAll(async () => {

@@ -9,8 +9,6 @@ jest.mock('bcrypt');
 
 describe('AuthService', () => {
   let service: AuthService;
-  let usersService: UsersService;
-  let jwtService: JwtService;
 
   const mockUsersService = {
     findByEmail: jest.fn(),
@@ -37,8 +35,6 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    usersService = module.get<UsersService>(UsersService);
-    jwtService = module.get<JwtService>(JwtService);
   });
 
   afterEach(() => {
@@ -70,8 +66,8 @@ describe('AuthService', () => {
         email: mockUser.email,
         userId: mockUser.id,
       });
-      expect(usersService.create).toHaveBeenCalledWith(createUserDto);
-      expect(jwtService.sign).toHaveBeenCalledWith({
+      expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
+      expect(mockJwtService.sign).toHaveBeenCalledWith({
         sub: mockUser.id,
         email: mockUser.email,
       });
@@ -104,7 +100,7 @@ describe('AuthService', () => {
         email: mockUser.email,
         userId: mockUser.id,
       });
-      expect(usersService.findByEmail).toHaveBeenCalledWith(loginDto.email);
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(loginDto.email);
       expect(bcrypt.compare).toHaveBeenCalledWith(
         loginDto.password,
         mockUser.password,
@@ -122,7 +118,7 @@ describe('AuthService', () => {
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
       );
-      expect(usersService.findByEmail).toHaveBeenCalledWith(loginDto.email);
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(loginDto.email);
     });
 
     it('should throw UnauthorizedException with invalid password', async () => {
@@ -185,7 +181,7 @@ describe('AuthService', () => {
 
       await service.login(loginDto);
 
-      expect(jwtService.sign).toHaveBeenCalledWith({
+      expect(mockJwtService.sign).toHaveBeenCalledWith({
         sub: mockUser.id,
         email: mockUser.email,
       });

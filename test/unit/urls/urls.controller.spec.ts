@@ -6,7 +6,6 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('UrlsController', () => {
   let controller: UrlsController;
-  let service: UrlsService;
 
   const mockUrlsService = {
     create: jest.fn(),
@@ -30,7 +29,6 @@ describe('UrlsController', () => {
     }).compile();
 
     controller = module.get<UrlsController>(UrlsController);
-    service = module.get<UrlsService>(UrlsService);
   });
 
   afterEach(() => {
@@ -55,10 +53,13 @@ describe('UrlsController', () => {
 
       mockUrlsService.create.mockResolvedValue(expectedResult);
 
-      const result = await controller.shorten(createUrlDto, null);
+      const result = await controller.shorten(createUrlDto, undefined);
 
       expect(result).toEqual(expectedResult);
-      expect(service.create).toHaveBeenCalledWith(createUrlDto, null);
+      expect(mockUrlsService.create).toHaveBeenCalledWith(
+        createUrlDto,
+        undefined,
+      );
     });
 
     it('should create a shortened URL with authentication', async () => {
@@ -84,7 +85,10 @@ describe('UrlsController', () => {
       const result = await controller.shorten(createUrlDto, user);
 
       expect(result).toEqual(expectedResult);
-      expect(service.create).toHaveBeenCalledWith(createUrlDto, 'user-123');
+      expect(mockUrlsService.create).toHaveBeenCalledWith(
+        createUrlDto,
+        'user-123',
+      );
     });
   });
 
@@ -109,7 +113,7 @@ describe('UrlsController', () => {
       const result = await controller.findMyUrls(req);
 
       expect(result).toEqual(expectedResult);
-      expect(service.findAllByUser).toHaveBeenCalledWith('user-123');
+      expect(mockUrlsService.findAllByUser).toHaveBeenCalledWith('user-123');
     });
   });
 
@@ -136,7 +140,7 @@ describe('UrlsController', () => {
       const result = await controller.update(urlId, updateUrlDto, req);
 
       expect(result).toEqual(expectedResult);
-      expect(service.update).toHaveBeenCalledWith(
+      expect(mockUrlsService.update).toHaveBeenCalledWith(
         urlId,
         updateUrlDto,
         'user-123',
@@ -153,7 +157,7 @@ describe('UrlsController', () => {
 
       await controller.remove(urlId, req);
 
-      expect(service.remove).toHaveBeenCalledWith(urlId, 'user-123');
+      expect(mockUrlsService.remove).toHaveBeenCalledWith(urlId, 'user-123');
     });
   });
 
@@ -172,8 +176,9 @@ describe('UrlsController', () => {
         user: null,
       };
 
+      const redirectMock = jest.fn();
       const mockResponse = {
-        redirect: jest.fn(),
+        redirect: redirectMock,
       } as unknown as Response;
 
       mockUrlsService.findOneByShortCode.mockResolvedValue(mockUrl);
@@ -181,12 +186,11 @@ describe('UrlsController', () => {
 
       await controller.redirect(shortCode, mockResponse);
 
-      expect(service.findOneByShortCode).toHaveBeenCalledWith(shortCode);
-      expect(service.incrementClickCount).toHaveBeenCalledWith('123');
-      expect(mockResponse.redirect).toHaveBeenCalledWith(
-        302,
-        'https://github.com',
+      expect(mockUrlsService.findOneByShortCode).toHaveBeenCalledWith(
+        shortCode,
       );
+      expect(mockUrlsService.incrementClickCount).toHaveBeenCalledWith('123');
+      expect(redirectMock).toHaveBeenCalledWith(302, 'https://github.com');
     });
 
     it('should throw NotFoundException if URL not found', async () => {
@@ -199,8 +203,10 @@ describe('UrlsController', () => {
         controller.redirect(shortCode, mockResponse),
       ).rejects.toThrow(NotFoundException);
 
-      expect(service.findOneByShortCode).toHaveBeenCalledWith(shortCode);
-      expect(service.incrementClickCount).not.toHaveBeenCalled();
+      expect(mockUrlsService.findOneByShortCode).toHaveBeenCalledWith(
+        shortCode,
+      );
+      expect(mockUrlsService.incrementClickCount).not.toHaveBeenCalled();
     });
 
     it('should handle soft deleted URLs correctly', async () => {
@@ -233,10 +239,13 @@ describe('UrlsController', () => {
 
       mockUrlsService.create.mockResolvedValue(expectedResult);
 
-      const result = await controller.shorten(createUrlDto, null);
+      const result = await controller.shorten(createUrlDto, undefined);
 
       expect(result).toEqual(expectedResult);
-      expect(service.create).toHaveBeenCalledWith(createUrlDto, null);
+      expect(mockUrlsService.create).toHaveBeenCalledWith(
+        createUrlDto,
+        undefined,
+      );
     });
 
     it('should handle very long URLs', async () => {
@@ -257,7 +266,7 @@ describe('UrlsController', () => {
 
       mockUrlsService.create.mockResolvedValue(expectedResult);
 
-      const result = await controller.shorten(createUrlDto, null);
+      const result = await controller.shorten(createUrlDto, undefined);
 
       expect(result.originalUrl.length).toBeGreaterThan(2000);
     });

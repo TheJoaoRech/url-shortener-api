@@ -4,7 +4,6 @@ import { AuthService } from '../../../src/auth/auth.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let service: AuthService;
 
   const mockAuthService = {
     register: jest.fn(),
@@ -23,7 +22,6 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-    service = module.get<AuthService>(AuthService);
   });
 
   afterEach(() => {
@@ -48,7 +46,7 @@ describe('AuthController', () => {
       const result = await controller.register(createUserDto);
 
       expect(result).toEqual(expectedResult);
-      expect(service.register).toHaveBeenCalledWith(createUserDto);
+      expect(mockAuthService.register).toHaveBeenCalledWith(createUserDto);
     });
   });
 
@@ -70,7 +68,7 @@ describe('AuthController', () => {
       const result = await controller.login(loginDto);
 
       expect(result).toEqual(expectedResult);
-      expect(service.login).toHaveBeenCalledWith(loginDto);
+      expect(mockAuthService.login).toHaveBeenCalledWith(loginDto);
     });
 
     it('should handle login with different email formats', async () => {
@@ -90,7 +88,7 @@ describe('AuthController', () => {
       const result = await controller.login(loginDto);
 
       expect(result).toEqual(expectedResult);
-      expect(service.login).toHaveBeenCalledWith(loginDto);
+      expect(mockAuthService.login).toHaveBeenCalledWith(loginDto);
     });
   });
 });
