@@ -534,7 +534,7 @@ Every push and pull request triggers:
 
 - ✅ **Prettier** - Code formatting validation
 - ✅ **ESLint** - Linting with NestJS rules
-- 🔍 Runs on Node.js 18.x and 20.x
+- 🔍 Runs on Node.js 20.x and 22.x (NestJS 11+ requirement)
 
 #### **2. Testing**
 
