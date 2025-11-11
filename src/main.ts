@@ -40,7 +40,7 @@ async function bootstrap() {
         '4. Start shortening URLs!\n\n' +
         '**Repository:** https://github.com/TheJoaoRech/url-shortener-api',
     )
-    .setVersion('1.0')
+    .setVersion('2.0')
     .addBearerAuth(
       {
         type: 'http',

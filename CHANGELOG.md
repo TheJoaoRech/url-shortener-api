@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-11-11
+
+### Added
+
+- Enhanced Swagger/OpenAPI documentation with detailed descriptions
+- Comprehensive API response examples for all endpoints
+- Detailed error response schemas with status codes
+- Improved DTO documentation with field descriptions and examples
+- Rich Swagger UI with feature highlights and getting started guide
+- Categorized API tags with emojis for better organization
+
+### Changed
+
+- **BREAKING**: Improved soft delete handling - URLs now properly excluded from queries
+- **BREAKING**: Enhanced alias validation to exclude soft-deleted URLs from uniqueness check
+- Test structure completely reorganized into modular folders
+- Test files moved to feature-based directories (auth/, urls/, users/, common/, config/)
+- E2E tests organized by module (app/, auth/, urls/)
+- Removed all `any` types from codebase for better type safety
+- README updated with accurate test structure documentation
+
+### Fixed
+
+- Soft delete queries now properly filter deleted URLs in all endpoints
+- Custom alias collision detection now excludes soft-deleted URLs
+- TypeORM synchronize now works correctly in test environment
+- Database connection timeouts adjusted for CI/CD environments
+- E2E test timeouts increased to prevent flaky tests in slow environments
+
+### Improved
+
+- Test coverage maintained at 98.75% with improved organization
+- All 84 unit tests passing with better structure
+- All 37 E2E tests passing with proper database handling
+- Better type safety with proper interfaces replacing `any`
+- Enhanced developer experience with clearer documentation
+
 ## [1.0.0] - 2025-11-10
 
 ### Added
@@ -56,4 +93,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock factories for testing
 - Hot reload in development mode
 
+[2.0.0]: https://github.com/TheJoaoRech/url-shortener-api/releases/tag/v2.0.0
 [1.0.0]: https://github.com/TheJoaoRech/url-shortener-api/releases/tag/v1.0.0

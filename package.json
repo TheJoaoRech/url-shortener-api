@@ -1,6 +1,6 @@
 {
   "name": "url-shortener-api",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "description": "Modern URL Shortener API built with NestJS",
   "author": "João Rech",
   "private": true,
