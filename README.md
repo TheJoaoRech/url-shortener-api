@@ -1,11 +1,13 @@
 # URL Shortener API
 
+![CI](https://github.com/TheJoaoRech/url-shortener-api/actions/workflows/ci.yml/badge.svg)
 ![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![TypeORM](https://img.shields.io/badge/TypeORM-FE0803?style=for-the-badge&logo=typeorm&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/postgresql-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
 ![Jest](https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
 ---
 
@@ -520,7 +522,60 @@ Tests cover:
 
 ---
 
-## 📘 API Documentation (Swagger)
+## � CI/CD Pipeline
+
+This project includes a complete **GitHub Actions** workflow for Continuous Integration and Continuous Deployment.
+
+### Automated Checks
+
+Every push and pull request triggers:
+
+#### **1. Code Quality**
+
+- ✅ **Prettier** - Code formatting validation
+- ✅ **ESLint** - Linting with NestJS rules
+- 🔍 Runs on Node.js 18.x and 20.x
+
+#### **2. Testing**
+
+- ✅ **Unit Tests** with coverage report
+- ✅ **E2E Tests** with PostgreSQL service
+- 📊 Coverage reports uploaded to Codecov
+
+#### **3. Build**
+
+- ✅ TypeScript compilation
+- ✅ Build artifacts validation
+- 🐳 Docker image build (on main branch)
+
+### Workflow File
+
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for complete configuration.
+
+### Running CI Locally
+
+```bash
+# Check formatting
+npm run format:check
+
+# Run linter
+npm run lint
+
+# Run all tests
+npm run test:cov
+npm run test:e2e
+
+# Build
+npm run build
+```
+
+### Status Badge
+
+[![CI](https://github.com/TheJoaoRech/url-shortener-api/actions/workflows/ci.yml/badge.svg)](https://github.com/TheJoaoRech/url-shortener-api/actions/workflows/ci.yml)
+
+---
+
+## �📘 API Documentation (Swagger)
 
 After starting the application, access the interactive documentation:
 
