@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from '../../../../src/app.controller';
 import { AppService } from '../../../../src/app.service';
+import { Response } from 'express';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -15,8 +16,26 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should redirect to /api/docs', () => {
+      const mockResponse = {
+        redirect: jest.fn(),
+      } as unknown as Response;
+
+      appController.redirectToDocs(mockResponse);
+
+      expect(mockResponse.redirect).toHaveBeenCalledWith('/api/docs');
+    });
+  });
+
+  describe('api info', () => {
+    it('should return API information', () => {
+      const result = appController.getApiInfo();
+
+      expect(result).toHaveProperty('name', 'URL Shortener API');
+      expect(result).toHaveProperty('version', '2.0');
+      expect(result).toHaveProperty('description');
+      expect(result).toHaveProperty('documentation', '/api/docs');
+      expect(result).toHaveProperty('repository');
     });
   });
 
