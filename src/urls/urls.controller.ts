@@ -42,8 +42,11 @@ export class UrlsController {
   })
   @ApiResponse({ status: 409, description: 'Custom alias already in use' })
   @ApiBearerAuth()
-  async shorten(@Body() createUrlDto: CreateUrlDto, @OptionalAuth() user: any) {
-    const userId = user?.userId || null;
+  async shorten(
+    @Body() createUrlDto: CreateUrlDto,
+    @OptionalAuth() user: { userId?: string } | undefined,
+  ) {
+    const userId = user?.userId;
     return this.urlsService.create(createUrlDto, userId);
   }
 
@@ -56,7 +59,7 @@ export class UrlsController {
     description: 'List of user URLs',
     type: [UrlResponseDto],
   })
-  async findMyUrls(@Request() req: any) {
+  async findMyUrls(@Request() req: { user: { userId: string } }) {
     return this.urlsService.findAllByUser(req.user.userId);
   }
 
@@ -74,7 +77,7 @@ export class UrlsController {
   async update(
     @Param('id') id: string,
     @Body() updateUrlDto: UpdateUrlDto,
-    @Request() req: any,
+    @Request() req: { user: { userId: string } },
   ) {
     return this.urlsService.update(id, updateUrlDto, req.user.userId);
   }
@@ -86,7 +89,10 @@ export class UrlsController {
   @ApiResponse({ status: 200, description: 'URL successfully deleted' })
   @ApiResponse({ status: 404, description: 'URL not found' })
   @ApiResponse({ status: 403, description: 'Not allowed to delete this URL' })
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(
+    @Param('id') id: string,
+    @Request() req: { user: { userId: string } },
+  ) {
     await this.urlsService.remove(id, req.user.userId);
     return { message: 'URL successfully deleted' };
   }
