@@ -11,26 +11,26 @@ describe('OptionalJwtAuthGuard', () => {
   describe('handleRequest', () => {
     it('should return user when user exists', () => {
       const mockUser = { userId: '123', email: 'test@test.com' };
-      const result = guard.handleRequest(null, mockUser, null);
+      const result = guard.handleRequest(null, mockUser);
 
       expect(result).toEqual(mockUser);
     });
 
     it('should return null when user does not exist', () => {
-      const result = guard.handleRequest(null, null, null);
+      const result = guard.handleRequest(null, null);
 
       expect(result).toBeNull();
     });
 
     it('should return null when user is undefined', () => {
-      const result = guard.handleRequest(null, undefined, null);
+      const result = guard.handleRequest(null, undefined);
 
       expect(result).toBeNull();
     });
 
     it('should return null even with error present', () => {
       const mockError = new Error('Auth failed');
-      const result = guard.handleRequest(mockError, null, null);
+      const result = guard.handleRequest(mockError, null);
 
       expect(result).toBeNull();
     });
@@ -38,14 +38,13 @@ describe('OptionalJwtAuthGuard', () => {
     it('should return user even with error present if user exists', () => {
       const mockError = new Error('Some error');
       const mockUser = { userId: '123', email: 'test@test.com' };
-      const result = guard.handleRequest(mockError, mockUser, null);
+      const result = guard.handleRequest(mockError, mockUser);
 
       expect(result).toEqual(mockUser);
     });
 
-    it('should return null with info present', () => {
-      const mockInfo = { message: 'No auth token' };
-      const result = guard.handleRequest(null, null, mockInfo);
+    it('should return null when user is false', () => {
+      const result = guard.handleRequest(null, false);
 
       expect(result).toBeNull();
     });
@@ -53,13 +52,20 @@ describe('OptionalJwtAuthGuard', () => {
 
   describe('canActivate', () => {
     it('should call super.canActivate', () => {
-      const mockContext = {
+      const mockContext: ExecutionContext = {
         switchToHttp: jest.fn().mockReturnValue({
           getRequest: jest.fn().mockReturnValue({
             headers: { authorization: 'Bearer token' },
           }),
         }),
-      } as any as ExecutionContext;
+        getClass: jest.fn(),
+        getHandler: jest.fn(),
+        getArgs: jest.fn(),
+        getArgByIndex: jest.fn(),
+        switchToRpc: jest.fn(),
+        switchToWs: jest.fn(),
+        getType: jest.fn(),
+      };
 
       const superSpy = jest
         .spyOn(

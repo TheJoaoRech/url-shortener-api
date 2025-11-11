@@ -3,11 +3,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OptionalAuth } from '../../../src/auth/decorators/optional-auth.decorator';
 import { OptionalJwtAuthGuard } from '../../../src/auth/guards/optional-jwt-auth.guard';
 
+interface JwtPayload {
+  userId: string;
+  email: string;
+}
+
 @Controller('test-decorator')
 class TestDecoratorController {
   @Get()
   @UseGuards(OptionalJwtAuthGuard)
-  testEndpoint(@OptionalAuth() user: any) {
+  testEndpoint(@OptionalAuth() user: JwtPayload | null | undefined) {
     return { user };
   }
 }

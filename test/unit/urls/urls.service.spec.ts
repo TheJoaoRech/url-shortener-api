@@ -10,6 +10,8 @@ import {
 import { UrlsService } from '../../../src/urls/urls.service';
 import { Url } from '../../../src/urls/entities/url.entity';
 
+type MockUrl = Omit<Url, 'user'>;
+
 describe('UrlsService', () => {
   let service: UrlsService;
 
@@ -386,7 +388,7 @@ describe('UrlsService', () => {
         originalUrl: 'https://newurl.com',
       };
 
-      const savedUrl = {
+      const savedUrl: MockUrl = {
         id: 'new-id',
         originalUrl: createUrlDto.originalUrl,
         shortCode: secondSlug,
@@ -397,7 +399,7 @@ describe('UrlsService', () => {
         deletedAt: null,
       };
 
-      mockRepository.create.mockReturnValue(savedUrl as any);
+      mockRepository.create.mockReturnValue(savedUrl);
       mockRepository.save.mockResolvedValue(savedUrl);
 
       const result = await service.create(createUrlDto);
@@ -442,7 +444,7 @@ describe('UrlsService', () => {
       };
 
       const shortCode = 'ABC123';
-      const savedUrl = {
+      const savedUrl: MockUrl = {
         id: 'url-id',
         originalUrl: createUrlDto.originalUrl,
         shortCode,
@@ -454,7 +456,7 @@ describe('UrlsService', () => {
       };
 
       mockRepository.findOne.mockResolvedValue(null);
-      mockRepository.create.mockReturnValue(savedUrl as any);
+      mockRepository.create.mockReturnValue(savedUrl);
       mockRepository.save.mockResolvedValue(savedUrl);
 
       const result = await service.create(createUrlDto);
@@ -470,7 +472,7 @@ describe('UrlsService', () => {
       };
 
       const shortCode = 'ABC123';
-      const savedUrl = {
+      const savedUrl: MockUrl = {
         id: 'url-id',
         originalUrl: createUrlDto.originalUrl,
         shortCode,
@@ -482,7 +484,7 @@ describe('UrlsService', () => {
       };
 
       mockRepository.findOne.mockResolvedValue(null);
-      mockRepository.create.mockReturnValue(savedUrl as any);
+      mockRepository.create.mockReturnValue(savedUrl);
       mockRepository.save.mockResolvedValue(savedUrl);
 
       const result = await service.create(createUrlDto);

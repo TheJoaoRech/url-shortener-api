@@ -259,7 +259,9 @@ describe('URLs E2E Tests', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200)
         .expect((res) => {
-          const url = res.body.find((u: any) => u.id === createdUrlId);
+          const url = res.body.find(
+            (u: { id: string }) => u.id === createdUrlId,
+          );
           expect(url.clickCount).toBeGreaterThan(0);
         });
     });
@@ -287,7 +289,9 @@ describe('URLs E2E Tests', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200)
         .expect((res) => {
-          const url = res.body.find((u: any) => u.id === createdUrlId);
+          const url = res.body.find(
+            (u: { id: string }) => u.id === createdUrlId,
+          );
           expect(url).toBeUndefined();
         });
     });
