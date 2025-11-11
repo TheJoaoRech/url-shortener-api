@@ -9,19 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index.ts",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/docs/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
+      "dest": "/api/index.ts"
     }
   ]
 }

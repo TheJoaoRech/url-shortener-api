@@ -9,6 +9,9 @@ import express, { Request, Response } from 'express';
 import { INestApplication } from '@nestjs/common';
 
 const expressApp = express();
+expressApp.use(express.json());
+expressApp.use(express.urlencoded({ extended: true }));
+
 let cachedApp: INestApplication | null = null;
 let isInitializing = false;
 let initializationError: Error | null = null;
@@ -88,6 +91,7 @@ const createNestServer = async (expressInstance: express.Express) => {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
+
     SwaggerModule.setup('api/docs', app, document, {
       customSiteTitle: 'URL Shortener API',
       customfavIcon: 'https://nestjs.com/img/logo-small.svg',
@@ -95,15 +99,16 @@ const createNestServer = async (expressInstance: express.Express) => {
       swaggerOptions: {
         persistAuthorization: true,
         displayRequestDuration: true,
-        filter: true,
-        showExtensions: true,
-        showCommonExtensions: true,
+        docExpansion: 'list',
+        defaultModelsExpandDepth: 1,
+        defaultModelExpandDepth: 1,
       },
     });
 
     console.log('Initializing NestJS application...');
     await app.init();
     console.log('NestJS application initialized successfully');
+    console.log('Swagger documentation available at: /api/docs');
 
     cachedApp = app;
     isInitializing = false;
