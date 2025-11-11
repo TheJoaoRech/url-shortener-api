@@ -615,6 +615,72 @@ After starting the application, access the interactive documentation:
 
 ---
 
+## 📬 API Collections (Postman/Insomnia)
+
+Ready-to-use collections for testing the API with pre-configured requests and environment variables:
+
+### 🟠 Postman Collection
+
+Import the file: [`docs/postman-collection.json`](./docs/postman-collection.json)
+
+**Features:**
+
+- ✅ All endpoints pre-configured
+- ✅ Auto-saves JWT token after login/register
+- ✅ Auto-saves URL ID and short code
+- ✅ Environment variables ready to use
+- ✅ Organized folders (Auth, URLs, Health)
+
+**How to use:**
+
+1. Open Postman
+2. Click **Import** → Select `docs/postman-collection.json`
+3. The collection will be imported with all requests
+4. Start with **Auth → Register User** or **Auth → Login**
+5. The token will be saved automatically!
+
+### 🔵 Insomnia Collection
+
+Import the file: [`docs/insomnia-collection.json`](./docs/insomnia-collection.json)
+
+**Features:**
+
+- ✅ All endpoints with descriptions
+- ✅ Environment variables configured
+- ✅ Organized workspace by feature
+- ✅ Ready for immediate testing
+
+**How to use:**
+
+1. Open Insomnia
+2. Click **Import/Export** → **Import Data** → **From File**
+3. Select `docs/insomnia-collection.json`
+4. Start testing with the Auth folder!
+
+### 📋 Available Requests:
+
+**Auth:**
+
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login and get JWT token
+
+**URLs:**
+
+- `POST /shorten` - Shorten URL (authenticated)
+- `POST /shorten` - Shorten URL with custom alias
+- `POST /shorten` - Shorten URL (anonymous)
+- `GET /my-urls` - List user's URLs
+- `PUT /my-urls/:id` - Update URL
+- `DELETE /my-urls/:id` - Soft delete URL
+- `GET /:shortCode` - Redirect to original URL
+
+**Health:**
+
+- `GET /health` - Health check
+- `GET /` - API root
+
+---
+
 ## 🌐 Environment Variables
 
 | Variable       | Description                           | Default Value |
