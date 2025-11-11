@@ -484,23 +484,37 @@ npm run test:e2e
 
 ```
 test/
-├── unit/                           # Isolated unit tests
+├── unit/                           # Isolated unit tests (modular structure)
+│   ├── app.controller.spec.ts
 │   ├── auth/
 │   │   ├── auth.controller.spec.ts
 │   │   ├── auth.service.spec.ts
-│   │   └── jwt.strategy.spec.ts
+│   │   ├── jwt.strategy.spec.ts
+│   │   ├── optional-auth-decorator-integration.spec.ts
+│   │   └── optional-jwt-auth.guard.spec.ts
 │   ├── users/
+│   │   ├── user.entity.spec.ts
 │   │   └── users.service.spec.ts
 │   ├── urls/
+│   │   ├── url.entity.spec.ts
 │   │   ├── urls.controller.spec.ts
 │   │   └── urls.service.spec.ts
-│   └── common/
-│       └── logging.interceptor.spec.ts
+│   ├── common/
+│   │   └── logging.interceptor.spec.ts
+│   ├── config/
+│   │   └── logger.config.spec.ts
+│   └── mocks/                      # Shared test mocks
+│       ├── repository.mock.ts
+│       ├── url.mock.ts
+│       └── user.mock.ts
 │
-├── e2e/                            # End-to-end tests
-│   ├── app.e2e-spec.ts
-│   ├── auth.e2e-spec.ts
-│   └── urls.e2e-spec.ts
+├── e2e/                            # End-to-end tests (modular structure)
+│   ├── app/
+│   │   └── app.e2e-spec.ts
+│   ├── auth/
+│   │   └── auth.e2e-spec.ts
+│   └── urls/
+│       └── urls.e2e-spec.ts
 │
 └── jest-e2e.json                   # E2E Configuration
 ```
