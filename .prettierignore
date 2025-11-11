@@ -1,0 +1,53 @@
+# Dependencies
+node_modules
+dist
+build
+
+# Coverage
+coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Generated files
+*.d.ts.map
+*.js.map
+
+# Cache
+.cache
+.eslintcache
+
+# Vercel
+.vercel
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Documentation
+docs/architecture-diagram.svg
+CHANGELOG.md
