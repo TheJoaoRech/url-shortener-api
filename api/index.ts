@@ -56,19 +56,15 @@ const createNestServer = async (expressInstance: express.Express) => {
 
     app.enableCors();
 
-    if (process.env.ENABLE_SWAGGER !== 'false') {
-      const config = new DocumentBuilder()
-        .setTitle('URL Shortener API')
-        .setDescription(
-          'RESTful API for URL shortening with JWT authentication',
-        )
-        .setVersion('1.0')
-        .addBearerAuth()
-        .build();
+    const config = new DocumentBuilder()
+      .setTitle('URL Shortener API')
+      .setDescription('RESTful API for URL shortening with JWT authentication')
+      .setVersion('2.0')
+      .addBearerAuth()
+      .build();
 
-      const document = SwaggerModule.createDocument(app, config);
-      SwaggerModule.setup('api/docs', app, document);
-    }
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
 
     console.log('Initializing NestJS application...');
     await app.init();
