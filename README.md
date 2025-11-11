@@ -59,9 +59,10 @@ A **modern and scalable RESTful API** built with **NestJS** for URL shortening w
 
 #### ✅ 2. URL Shortening
 
-- Functionality available **only with authentication**
-- URLs are associated with the logged-in user (`userId` field)
-- Automatic shortCode generation with nanoid (6-10 characters)
+- Functionality available **with or without authentication**
+- URLs are associated with the logged-in user (`userId` field) when authenticated
+- **Automatic shortCode generation with nanoid (exactly 6 characters)**
+- **Custom alias support (3-30 characters) for authenticated users**
 - Valid original URL validation
 
 #### ✅ 3. URL Management (authenticated users)
@@ -88,14 +89,16 @@ A **modern and scalable RESTful API** built with **NestJS** for URL shortening w
 
 ### URL Business Rules
 
-| Rule                     | Description                                                        |
-| ------------------------ | ------------------------------------------------------------------ |
-| **URL Validation**       | Must contain valid `http://` or `https://` protocol                |
-| **Short Code**           | Automatically generated with nanoid (6-10 alphanumeric characters) |
-| **shortCode Generation** | nanoid algorithm guarantees statistical uniqueness                 |
-| **Redirection**          | HTTP Status **301 Moved Permanently** (permanent redirect)         |
-| **Deleted URLs**         | Return **404 Not Found** when attempting to access                 |
-| **Timestamps**           | `createdAt`, `updatedAt`, `deletedAt` automatic via TypeORM        |
+| Rule                     | Description                                                                 |
+| ------------------------ | --------------------------------------------------------------------------- |
+| **URL Validation**       | Must contain valid `http://` or `https://` protocol                         |
+| **Short Code**           | **Automatically generated with nanoid (exactly 6 alphanumeric characters)** |
+| **Custom Alias**         | Optional for authenticated users (3-30 characters, [a-z0-9_-])              |
+| **shortCode Generation** | nanoid algorithm guarantees statistical uniqueness ([A-Za-z0-9]{6})         |
+| **Redirection**          | HTTP Status **302 Found** (temporary redirect with tracking)                |
+| **Deleted URLs**         | Return **404 Not Found** when attempting to access                          |
+| **Timestamps**           | `createdAt`, `updatedAt`, `deletedAt` automatic via TypeORM                 |
+| **Reserved Routes**      | Aliases cannot use reserved words (auth, docs, my-urls, etc.)               |
 
 ---
 
@@ -232,7 +235,7 @@ flowchart TD
     E[Validate original URL]
     F{Valid URL?}
     G[Return 400 Bad Request]
-    H[Generate shortCode with nanoid<br/>6-10 characters]
+    H[Generate shortCode with nanoid<br/>exactly 6 characters]
     I{Unique shortCode?}
     J[Save URL in database<br/>with associated userId]
     K[Return 201 Created<br/>with shortUrl]
@@ -271,7 +274,7 @@ erDiagram
     URL {
         UUID id PK
         TEXT originalUrl "Complete URL"
-        STRING shortCode UK "6-10 chars nanoid, unique"
+        STRING shortCode UK "exactly 6 chars [A-Za-z0-9], unique"
         TIMESTAMP createdAt "default: now()"
         TIMESTAMP updatedAt "auto-update"
         TIMESTAMP deletedAt "nullable"
@@ -367,6 +370,89 @@ npm run start:prod
 
 - 🌐 **API:** [http://localhost:3000](http://localhost:3000)
 - 📚 **Swagger Docs:** [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
+
+---
+
+## 🐳 Running with Docker
+
+### Using Docker Compose
+
+The easiest way to run the entire stack (API + PostgreSQL) locally:
+
+#### **1️⃣ Start all services**
+
+```bash
+docker-compose up -d
+```
+
+This will start:
+
+- 🐘 PostgreSQL database on port `5432`
+- 🚀 NestJS API on port `3000`
+
+#### **2️⃣ View logs**
+
+```bash
+# All services
+docker-compose logs -f
+
+# Only API
+docker-compose logs -f api
+
+# Only database
+docker-compose logs -f db
+```
+
+#### **3️⃣ Stop services**
+
+```bash
+docker-compose down
+```
+
+#### **4️⃣ Stop and remove volumes (⚠️ deletes data)**
+
+```bash
+docker-compose down -v
+```
+
+### Environment Variables for Docker
+
+Create a `.env` file in the project root:
+
+```env
+# Database (Docker)
+DATABASE_URL=postgresql://postgres:password@db:5432/url_shortener
+
+# JWT
+JWT_SECRET=your-super-secure-secret-key-here
+JWT_EXPIRATION=1h
+
+# Application
+PORT=3000
+NODE_ENV=development
+BASE_URL=http://localhost:3000
+```
+
+> **Note:** When using Docker Compose, the database host should be `db` (service name), not `localhost`.
+
+### Docker Commands
+
+```bash
+# Build images
+docker-compose build
+
+# Start in detached mode
+docker-compose up -d
+
+# Restart a specific service
+docker-compose restart api
+
+# Access API container bash
+docker-compose exec api sh
+
+# Access PostgreSQL
+docker-compose exec db psql -U postgres -d url_shortener
+```
 
 ---
 
